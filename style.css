@@ -92,25 +92,16 @@ body.light .subtitle { color:#555; }
 
 /* BUTTON ROW */
 .button-row {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  flex-wrap: nowrap; /* prevent stacking */
-  overflow-x: auto;  /* allow horizontal scroll if too narrow */
-  padding-bottom: 10px;
+  display:flex; justify-content:center; gap:16px; margin-top:20px;
+  flex-wrap:nowrap; /* prevent stacking */
+  overflow-x:auto;
+  padding-bottom:10px;
 }
 
-.button-row::-webkit-scrollbar { height: 6px; }
+.button-row::-webkit-scrollbar { height:6px; }
 .button-row::-webkit-scrollbar-thumb { background: rgba(88,101,242,0.5); border-radius:3px; }
 .button-row::-webkit-scrollbar-track { background: transparent; }
 
-@media(max-width:500px){
-  .interactive-btn {
-    flex:1;
-    min-width:120px; /* ensures buttons shrink but stay horizontal */
-  }
-}
 .interactive-btn {
   padding:12px 24px; border-radius:12px; border:none; cursor:pointer;
   background:#5865f2; color:#fff; font-weight:500;
@@ -123,6 +114,13 @@ body.light .subtitle { color:#555; }
 .interactive-btn:active {
   transform:scale(0.98);
   box-shadow:0 5px 10px rgba(88,101,242,0.2);
+}
+
+@media(max-width:500px){
+  .interactive-btn {
+    flex:1;
+    min-width:120px;
+  }
 }
 
 /* FEATURES SECTION */
@@ -139,19 +137,25 @@ body.light .subtitle { color:#555; }
 body.light .features { background: rgba(255,255,255,0.85); color:#111; }
 body.light .features li { color:#333; }
 
-/* RULES SECTION */
-.rules {
+/* COLLAPSIBLE SECTIONS */
+.collapsible {
   max-width:800px; width:100%; background: rgba(20,22,34,0.85);
-  border-radius:20px; padding:30px; margin-top:20px;
+  border-radius:20px; padding:0 30px; margin-top:20px;
   box-shadow:0 20px 50px rgba(0,0,0,0.4);
-  opacity:0; transform:translateY(20px);
-  animation: fadeInUp 1s forwards 0.7s;
+  overflow:hidden; max-height:0; opacity:0;
+  transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.5s ease;
 }
-.rules h2 { font-size:2rem; margin-bottom:20px; }
-.rules ol { list-style-position: inside; gap:10px; display:flex; flex-direction:column; }
-.rules li { font-size:1rem; color:#ccc; }
-body.light .rules { background: rgba(255,255,255,0.85); color:#111; }
-body.light .rules li { color:#333; }
+.collapsible.active {
+  padding:30px;
+  max-height:1000px;
+  opacity:1;
+}
+.collapsible h2 { font-size:2rem; margin-bottom:20px; }
+.collapsible ol, .collapsible ul { list-style-position: inside; display:flex; flex-direction:column; gap:10px; }
+.collapsible li { font-size:1rem; color:#ccc; }
+
+body.light .collapsible { background: rgba(255,255,255,0.85); color:#111; }
+body.light .collapsible li { color:#333; }
 
 /* FLOAT ANIMATION */
 @keyframes float {
@@ -165,33 +169,8 @@ body.light .rules li { color:#333; }
   to { opacity:1; transform:translateY(0); }
 }
 
-/* MOBILE */
+/* MOBILE CARD */
 @media(max-width:900px){
   .card{grid-template-columns:1fr;padding:28px;}
   .widget{height:480px;}
-  .button-row{flex-direction:column; gap:12px;}
 }
-
-/* Added collapsible */
-.collapsible {
-  max-width:800px;
-  width:100%;
-  background: rgba(20,22,34,0.85);
-  border-radius:20px;
-  padding:0 30px; /* start with 0 top/bottom padding */
-  margin-top:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.4);
-  overflow:hidden;
-  max-height:0;
-  opacity:0;
-  transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.5s ease;
-}
-
-.collapsible.active {
-  padding:30px;
-  max-height:1000px;
-  opacity:1;
-}
-
-body.light .collapsible { background: rgba(255,255,255,0.85); color:#111; }
-body.light .collapsible li { color:#333; }
