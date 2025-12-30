@@ -15,8 +15,24 @@ toggle.addEventListener("click", () => {
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 });
 
-// DISCORD LIVE STATS FETCH
+// DISCORD LIVE STATS FETCH WITH ANIMATION
 const SERVER_ID = "1433645535583277129";
+
+// Animate numbers from current value to target
+function animateNumber(element, target, duration = 1000) {
+  const start = parseInt(element.innerText.replace(/\D/g, "")) || 0;
+  const range = target - start;
+  const startTime = performance.now();
+
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    element.innerText = Math.floor(start + range * progress);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+}
 
 async function fetchStats() {
   try {
@@ -24,17 +40,18 @@ async function fetchStats() {
     if (!res.ok) return;
     const data = await res.json();
 
-    // presence_count sometimes gives online count, fallback to counting members manually
+    // Calculate total and online members
     let totalMembers = data.members?.length || data.presence_count || 0;
     let onlineMembers = data.members?.filter(m => m.status !== "offline").length || data.presence_count || 0;
 
-    // if widget JSON is missing members array, just display total online from presence_count
+    // Fallback if members array is missing
     if (!data.members) onlineMembers = data.presence_count || 0;
 
-    document.getElementById("members").innerText = totalMembers;
-    document.getElementById("online").innerText = onlineMembers;
-  } catch(e) { 
-    console.warn("Could not fetch stats"); 
+    // Animate counters
+    animateNumber(document.getElementById("members"), totalMembers);
+    animateNumber(document.getElementById("online"), onlineMembers);
+  } catch(e) {
+    console.warn("Could not fetch stats");
     document.getElementById("members").innerText = "N/A";
     document.getElementById("online").innerText = "N/A";
   }
