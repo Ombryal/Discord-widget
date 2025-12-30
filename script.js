@@ -15,11 +15,6 @@ toggle.addEventListener("click", () => {
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 });
 
-// Smooth scroll for sections
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-}
-
 // Discord stats fetch with animation
 const SERVER_ID = "1433645535583277129";
 
@@ -66,9 +61,7 @@ function toggleSection(id) {
   const sections = document.querySelectorAll('.collapsible');
   sections.forEach(section => {
     if (section.id === id) {
-      // Toggle active class
       section.classList.toggle('active');
-      // Scroll only if opening
       if(section.classList.contains('active')){
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
