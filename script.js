@@ -15,7 +15,7 @@ toggle.addEventListener("click", () => {
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 });
 
-// Smooth scroll for buttons
+// Smooth scroll for sections
 function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
@@ -60,3 +60,16 @@ async function fetchStats() {
 
 fetchStats();
 setInterval(fetchStats, 60000);
+
+// Collapsible sections logic
+function toggleSection(id) {
+  const sections = document.querySelectorAll('.collapsible');
+  sections.forEach(section => {
+    if (section.id === id) {
+      section.classList.toggle('active');
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      section.classList.remove('active');
+    }
+  });
+}
