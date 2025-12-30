@@ -173,14 +173,12 @@ body.light .rules li { color:#333; }
 }
 
 /* Added collapsible */
-
 .collapsible {
-  display: none; /* hide until button is pressed */
   max-width:800px;
   width:100%;
   background: rgba(20,22,34,0.85);
   border-radius:20px;
-  padding:30px;
+  padding:0 30px; /* start with 0 top/bottom padding */
   margin-top:20px;
   box-shadow:0 20px 50px rgba(0,0,0,0.4);
   overflow:hidden;
@@ -190,9 +188,9 @@ body.light .rules li { color:#333; }
 }
 
 .collapsible.active {
-  max-height:1000px; /* large enough to show content */
-  opacity:1;
   padding:30px;
+  max-height:1000px;
+  opacity:1;
 }
 
 body.light .collapsible { background: rgba(255,255,255,0.85); color:#111; }
