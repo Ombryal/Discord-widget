@@ -13,7 +13,6 @@ body {
   overflow-x: hidden;
 }
 
-/* NOISE TEXTURE */
 body::before {
   content: '';
   position: fixed;
@@ -24,14 +23,12 @@ body::before {
   z-index:0;
 }
 
-body.light::before {
-  opacity:0.02;
-}
+body.light::before { opacity:0.02; }
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
 }
 
 /* THEME BUTTON */
@@ -93,12 +90,30 @@ body.light .subtitle { color:#555; }
 }
 .join:hover { transform:translateY(-2px); opacity:.9; }
 
-/* FEATURES */
+/* BUTTON ROW */
+.button-row {
+  display:flex; justify-content:center; gap:16px; margin-top:20px; flex-wrap:wrap;
+}
+.interactive-btn {
+  padding:12px 24px; border-radius:12px; border:none; cursor:pointer;
+  background:#5865f2; color:#fff; font-weight:500;
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.interactive-btn:hover {
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px rgba(88,101,242,0.4);
+}
+.interactive-btn:active {
+  transform:scale(0.98);
+  box-shadow:0 5px 10px rgba(88,101,242,0.2);
+}
+
+/* FEATURES SECTION */
 .features {
   max-width:800px; width:100%; background: rgba(20,22,34,0.85);
   border-radius:20px; padding:30px; text-align:center;
   box-shadow:0 20px 50px rgba(0,0,0,0.4);
-  opacity:0; transform: translateY(20px);
+  opacity:0; transform:translateY(20px);
   animation: fadeInUp 1s forwards 0.5s;
 }
 .features h2 { font-size:2rem; margin-bottom:20px; }
@@ -106,6 +121,20 @@ body.light .subtitle { color:#555; }
 .features li { font-size:1rem; color:#ccc; }
 body.light .features { background: rgba(255,255,255,0.85); color:#111; }
 body.light .features li { color:#333; }
+
+/* RULES SECTION */
+.rules {
+  max-width:800px; width:100%; background: rgba(20,22,34,0.85);
+  border-radius:20px; padding:30px; margin-top:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  opacity:0; transform:translateY(20px);
+  animation: fadeInUp 1s forwards 0.7s;
+}
+.rules h2 { font-size:2rem; margin-bottom:20px; }
+.rules ol { list-style-position: inside; gap:10px; display:flex; flex-direction:column; }
+.rules li { font-size:1rem; color:#ccc; }
+body.light .rules { background: rgba(255,255,255,0.85); color:#111; }
+body.light .rules li { color:#333; }
 
 /* FLOAT ANIMATION */
 @keyframes float {
@@ -123,4 +152,5 @@ body.light .features li { color:#333; }
 @media(max-width:900px){
   .card{grid-template-columns:1fr;padding:28px;}
   .widget{height:480px;}
+  .button-row{flex-direction:column; gap:12px;}
 }
