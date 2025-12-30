@@ -54,24 +54,12 @@
 
   <!-- Buttons Row -->
   <div class="button-row">
-    <button class="interactive-btn" onclick="scrollToSection('rules')">Rules</button>
-    <button class="interactive-btn" onclick="window.open('https://discord.gg/YOUR_INVITE', '_blank')">Join Discord</button>
-    <button class="interactive-btn" onclick="scrollToSection('features')">Features</button>
+    <button class="interactive-btn" onclick="toggleSection('rules')">Rules</button>
+    <button class="interactive-btn" onclick="toggleSection('moderators')">Moderators</button>
   </div>
 
-  <!-- Features Section -->
-  <section class="features" id="features">
-    <h2>Why Join Us?</h2>
-    <ul>
-      <li>Friendly and active community</li>
-      <li>24/7 chat & support</li>
-      <li>Exclusive channels & events</li>
-      <li>Custom bots and tools</li>
-    </ul>
-  </section>
-
-  <!-- Rules Section -->
-  <section class="rules" id="rules">
+  <!-- Collapsible Sections -->
+  <section class="rules collapsible" id="rules">
     <h2>Server Rules</h2>
     <ol>
       <li>Respect everyone. No harassment, targeted insults, or personal attacks.</li>
@@ -85,6 +73,27 @@
       <li>Stay on topic. Use channels according to their intended purpose.</li>
       <li>18+ only. Anyone under 18 will be immediately banned.</li>
     </ol>
+  </section>
+
+  <section class="moderators collapsible" id="moderators">
+    <h2>Moderators</h2>
+    <ul>
+      <li>Mod1 – Online</li>
+      <li>Mod2 – Offline</li>
+      <li>Mod3 – Online</li>
+      <li>Mod4 – Offline</li>
+    </ul>
+  </section>
+
+  <!-- Features Section at Bottom -->
+  <section class="features" id="features">
+    <h2>Why Join Us?</h2>
+    <ul>
+      <li>Friendly and active community</li>
+      <li>24/7 chat & support</li>
+      <li>Exclusive channels & events</li>
+      <li>Custom bots and tools</li>
+    </ul>
   </section>
 
 </div>
