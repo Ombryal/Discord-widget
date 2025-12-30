@@ -66,8 +66,12 @@ function toggleSection(id) {
   const sections = document.querySelectorAll('.collapsible');
   sections.forEach(section => {
     if (section.id === id) {
+      // Toggle active class
       section.classList.toggle('active');
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Scroll only if opening
+      if(section.classList.contains('active')){
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     } else {
       section.classList.remove('active');
     }
