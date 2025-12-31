@@ -681,3 +681,97 @@ body::after {
 
 /* Smooth scroll & over-scroll */
 html, body { overscroll-behavior: contain; scroll-behavior: smooth; }
+
+/* Avatar in cards */
+.mod-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* Admin (highlighted) card */
+.admin-card {
+  width: 140px;
+  min-height: 160px;
+  background: rgba(25,28,45,0.85);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-card:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(88,101,242,0.7);
+}
+.admin-card:active {
+  transform: scale(0.96);
+  box-shadow: 0 12px 25px rgba(88,101,242,0.6);
+}
+
+/* Mod card */
+.mod-card-secondary {
+  width: 120px;
+  min-height: 140px;
+  background: rgba(30,32,50,0.85);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.mod-card-secondary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(88,101,242,0.5);
+}
+.mod-card-secondary:active {
+  transform: scale(0.95);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Name & handle */
+.mod-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.mod-handle {
+  font-size: 0.8rem;
+  color: #b5b8cc;
+}
+
+/* Responsive grid */
+.moderator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+.moderator-grid.admins {
+  justify-content: center;
+}
+/* Center last admin card if odd */
+.moderator-grid.admins .admin-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* Mobile adjustments */
+@media(max-width: 768px) {
+  .moderator-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .admin-card { width: 130px; min-height: 150px; }
+  .mod-card-secondary { width: 120px; min-height: 140px; }
+}
