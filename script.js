@@ -65,88 +65,62 @@ const handleScrollAnimation = () => {
 window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
-/* =========================
-   DISCORD LIVE WIDGET FETCH
-   ========================= */
+const moderatorsContainer = document.querySelector('#moderators .moderator-grid.admins');
+const modsContainer = document.querySelector('#moderators .moderator-grid.mods');
 
-const GUILD_WIDGET_URL =
-  "https://discord.com/api/guilds/1433645535583277129/widget.json";
+// Replace with your guild ID
+const GUILD_ID = '1433645535583277129';
+const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
 
-const membersEl = document.getElementById("members");
-const onlineEl = document.getElementById("online");
-
-const liveCountEl = document.getElementById("liveOnline");
-const liveMembersEl = document.getElementById("liveMembers");
-
-/* Number animation */
-function animateNumber(el, target, duration = 1200) {
-  const start = 0;
-  const startTime = performance.now();
-
-  function update(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    el.textContent = Math.floor(progress * target);
-    if (progress < 1) requestAnimationFrame(update);
-  }
-
-  requestAnimationFrame(update);
-}
-
-/* Fetch Discord widget */
-async function fetchDiscordWidget() {
+// Fetch the widget JSON
+async function fetchDiscordData() {
   try {
-    const res = await fetch(GUILD_WIDGET_URL);
+    const res = await fetch(WIDGET_URL);
     const data = await res.json();
 
-    /* Update top stats */
-    if (membersEl) animateNumber(membersEl, data.presence_count + 50);
-    if (onlineEl) animateNumber(onlineEl, data.presence_count);
+    // Clear current cards
+    moderatorsContainer.innerHTML = '';
+    modsContainer.innerHTML = '';
 
-    /* Live activity section */
-    if (!liveMembersEl || !liveCountEl) return;
-
-    liveCountEl.textContent = data.presence_count;
-    liveMembersEl.innerHTML = "";
-
+    // Example: admins first
     data.members.forEach(member => {
-      const pill = document.createElement("div");
-      pill.className = "live-member";
-      pill.textContent = member.username;
-      liveMembersEl.appendChild(pill);
+      const isAdmin = member.roles && member.roles.includes('Admin'); // If you have roles
+      const isMod = member.roles && member.roles.includes('Mod');
+
+      const card = document.createElement('div');
+      card.classList.add(isAdmin ? 'admin-card' : 'mod-card-secondary');
+
+      // Avatar
+      const img = document.createElement('img');
+      img.src = member.avatar_url || `https://cdn.discordapp.com/embed/avatars/${member.discriminator % 5}.png`;
+      img.alt = member.username;
+      img.classList.add('mod-avatar');
+      card.appendChild(img);
+
+      // Name
+      const name = document.createElement('div');
+      name.classList.add('mod-name');
+      name.textContent = member.username;
+      card.appendChild(name);
+
+      // Handle / tag
+      const handle = document.createElement('div');
+      handle.classList.add('mod-handle');
+      handle.textContent = `#${member.discriminator}`;
+      card.appendChild(handle);
+
+      // Append to correct container
+      if (isAdmin) moderatorsContainer.appendChild(card);
+      else if (isMod) modsContainer.appendChild(card);
     });
 
   } catch (err) {
-    console.error("Discord widget fetch failed:", err);
+    console.error('Failed to fetch Discord widget:', err);
   }
 }
 
-/* Auto-scroll live members */
-function autoScrollMembers() {
-  if (!liveMembersEl) return;
+// Initial fetch
+fetchDiscordData();
 
-  let scrollPos = 0;
-
-  setInterval(() => {
-    if (
-      liveMembersEl.scrollWidth <=
-      liveMembersEl.clientWidth
-    ) return;
-
-    scrollPos += 1;
-    if (
-      scrollPos >=
-      liveMembersEl.scrollWidth - liveMembersEl.clientWidth
-    ) {
-      scrollPos = 0;
-    }
-
-    liveMembersEl.scrollLeft = scrollPos;
-  }, 30);
-}
-
-/* Init */
-fetchDiscordWidget();
-autoScrollMembers();
-
-/* Refresh every 30s */
-setInterval(fetchDiscordWidget, 30000);
+// Optional: refresh every 60s to update online/offline
+setInterval(fetchDiscordData, 60000);
