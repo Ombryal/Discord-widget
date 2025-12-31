@@ -9,19 +9,19 @@
 
 <body>
 
+<!-- Theme Toggle -->
 <button id="themeToggle" aria-label="Toggle theme">☀ / 🌙</button>
 
 <div class="wrapper">
 
   <!-- Main Card -->
   <section class="card">
-
     <div class="left">
       <h1>Our Discord Server</h1>
       <p class="subtitle">See the activity and vibe before you join.</p>
 
       <!-- Live Stats -->
-      <div class="stats" id="stats">
+      <div class="stats">
         <div class="stat">
           <div class="num" id="members">0</div>
           <div class="label">Members</div>
@@ -49,17 +49,10 @@
         Join the Server
       </a>
     </div>
-
   </section>
 
-  <!-- Buttons Row -->
-  <div class="button-row">
-    <button class="interactive-btn" onclick="toggleSection('rules')">Rules</button>
-    <button class="interactive-btn" onclick="toggleSection('moderators')">Moderators</button>
-  </div>
-
-  <!-- Collapsible Sections -->
-  <section class="collapsible" id="rules">
+  <!-- Rules Section -->
+  <section class="rules">
     <h2>Server Rules</h2>
     <ol>
       <li>Respect everyone. No harassment, targeted insults, or personal attacks.</li>
@@ -75,18 +68,51 @@
     </ol>
   </section>
 
-  <section class="collapsible" id="moderators">
+  <!-- Moderators Section -->
+  <section id="moderators">
     <h2>Moderators</h2>
-    <ul>
-      <li>Mod1 – Online</li>
-      <li>Mod2 – Offline</li>
-      <li>Mod3 – Online</li>
-      <li>Mod4 – Offline</li>
-    </ul>
+
+    <!-- Admins -->
+    <h3>Admins</h3>
+    <div class="moderator-grid admins">
+      <div class="mod-card admin-card">
+        <div class="mod-name">Midnight Cane</div>
+        <div class="mod-handle">@midnightcane</div>
+      </div>
+      <div class="mod-card admin-card">
+        <div class="mod-name">Official Potato</div>
+        <div class="mod-handle">@venomsong</div>
+      </div>
+      <div class="mod-card admin-card">
+        <div class="mod-name">Tekking$$</div>
+        <div class="mod-handle">@tekking_07_12417</div>
+      </div>
+    </div>
+
+    <!-- Mods -->
+    <h3>Mods</h3>
+    <div class="moderator-grid mods">
+      <div class="mod-card mod-card-secondary">
+        <div class="mod-name">LightSpeed&lt;3</div>
+        <div class="mod-handle">@maihunnids</div>
+      </div>
+      <div class="mod-card mod-card-secondary">
+        <div class="mod-name">Albert</div>
+        <div class="mod-handle">@uncannydetective</div>
+      </div>
+      <div class="mod-card mod-card-secondary">
+        <div class="mod-name">THE ONE</div>
+        <div class="mod-handle">@theone_lost.from.light</div>
+      </div>
+      <div class="mod-card mod-card-secondary">
+        <div class="mod-name">zero_x_machina</div>
+        <div class="mod-handle">@zero_x_machina</div>
+      </div>
+    </div>
   </section>
 
-  <!-- Features Section at Bottom -->
-  <section class="features" id="features">
+  <!-- Features Section -->
+  <section class="features">
     <h2>Why Join Us?</h2>
     <ul>
       <li>Friendly and active community</li>
