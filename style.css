@@ -602,27 +602,27 @@ body.light .rules li::before {
   }
 
 /* =========================
-   SERVER HIGHLIGHTS STYLING
+   SERVER HIGHLIGHTS REVAMP
    ========================= */
 .server-highlights {
-  max-width: 1200px;
+  max-width: 95%;  /* slightly edge to edge */
   width: 100%;
-  background: rgba(20,22,34,0.85);
-  backdrop-filter: blur(14px);
+  background: rgba(20,22,34,0.9);
+  backdrop-filter: blur(15px);
   border-radius: 24px;
   padding: 40px 30px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   display: flex;
   flex-direction: column;
   gap: 40px;
-  margin: 40px 0;
+  margin: 40px auto;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 1s forwards 0.3s;
 }
 
 body.light .server-highlights {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.95);
   color: #111;
 }
 
@@ -631,38 +631,39 @@ body.light .server-highlights {
   font-size: 2rem;
   text-align: center;
   color: #5865f2;
-  text-shadow: 0 0 8px rgba(88,101,242,0.8);
+  text-shadow: 0 0 10px rgba(88,101,242,0.8);
+  margin-bottom: 20px;
 }
 
 /* Stats Cards Container */
 .highlights-stats {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 25px;
   flex-wrap: wrap;
+  scroll-snap-type: x mandatory; /* optional for snapping effect */
 }
 
-/* Individual Highlight Card */
-.highlight-card {
+/* Individual Stat Card */
+.stat-card {
+  flex: 0 0 120px;
   background: rgba(25,28,45,0.85);
   border-radius: 16px;
   padding: 20px;
-  min-width: 120px;
   text-align: center;
   color: #fff;
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+  scroll-snap-align: start;
 }
 
-body.light .highlight-card {
+body.light .stat-card {
   background: rgba(255,255,255,0.9);
   color: #111;
 }
 
-/* Hover Effects */
-.highlight-card:hover {
-  transform: translateY(-8px) scale(1.05);
+.stat-card:hover {
+  transform: translateY(-6px) scale(1.05);
   box-shadow: 0 15px 35px rgba(0,0,0,0.7), 0 0 20px rgba(88,101,242,0.5);
 }
 
@@ -677,22 +678,31 @@ body.light .highlight-card {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.2rem;
-  margin: 0 auto 10px;
+  font-size: 1.3rem;
+  margin: 0 auto 12px;
   box-shadow: 0 0 12px rgba(88,101,242,0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Bot Cards */
+.stat-card .stat-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(88,101,242,0.9);
+}
+
+/* Bot Cards Container */
 .highlights-bots {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
 }
 
 /* Individual Bot Card */
 .bot-card {
-  flex: 1 1 200px;
+  flex: 0 0 200px;
   max-width: 250px;
   background: rgba(30,32,50,0.85);
   border-radius: 20px;
@@ -700,6 +710,13 @@ body.light .highlight-card {
   text-align: center;
   box-shadow: 0 12px 30px rgba(0,0,0,0.5);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+body.light .bot-card {
+  background: rgba(255,255,255,0.9);
+  color: #111;
 }
 
 .bot-card h3 {
@@ -709,36 +726,51 @@ body.light .highlight-card {
 }
 
 .bot-card p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #ccc;
 }
 
-/* Bot Card Hover */
+/* Hover Animations */
 .bot-card:hover {
   transform: translateY(-6px) rotate(-1deg);
   box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(88,101,242,0.5);
 }
 
-/* Mobile Responsive */
+/* Auto-scroll hint */
+.highlights-bots::-webkit-scrollbar {
+  height: 6px;
+}
+.highlights-bots::-webkit-scrollbar-thumb {
+  background: rgba(88,101,242,0.5);
+  border-radius: 3px;
+}
+.highlights-bots::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Fade in animation */
+.server-highlights.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 700px) {
   .highlights-stats {
     flex-direction: row;
     justify-content: space-around;
-    flex-wrap: wrap;
   }
   .stat-card .stat-circle {
     width: 50px;
     height: 50px;
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   .highlights-bots {
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
   }
-}
-
-/* Scroll fade in */
-.server-highlights.show {
-  opacity: 1;
-  transform: translateY(0);
+  .bot-card {
+    flex: 0 0 180px;
+    max-width: 200px;
+  }
 }
