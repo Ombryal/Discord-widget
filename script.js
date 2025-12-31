@@ -64,39 +64,3 @@ const handleScrollAnimation = () => {
 
 window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
-
-// ==========================
-// AUTO-SCROLL BOT CARDS
-// ==========================
-const botContainer = document.querySelector('.highlights-bots');
-let scrollAmount = 0;
-const scrollStep = 1; // pixels per frame
-const scrollDelay = 10; // ms between frames
-
-function autoScrollBots() {
-  if (!botContainer) return;
-
-  scrollAmount += scrollStep;
-  
-  if (scrollAmount >= botContainer.scrollWidth - botContainer.clientWidth) {
-    scrollAmount = 0; // reset to start
-  }
-
-  botContainer.scrollTo({
-    left: scrollAmount,
-    behavior: 'smooth'
-  });
-
-  requestAnimationFrame(autoScrollBots);
-}
-
-// Start auto-scroll
-autoScrollBots();
-
-// Allow user scroll naturally
-botContainer.addEventListener('mouseenter', () => {
-  cancelAnimationFrame(autoScrollBots); // pause auto-scroll on hover
-});
-botContainer.addEventListener('mouseleave', () => {
-  requestAnimationFrame(autoScrollBots); // resume auto-scroll
-});
