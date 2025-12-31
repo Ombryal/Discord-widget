@@ -474,3 +474,207 @@ body::after {
   transform: scale(0.97);
   box-shadow: 0 6px 16px rgba(88,101,242,0.4);
 }
+
+/* =========================
+   MAIN CARD (DISCORD OVERVIEW)
+   ========================= */
+.card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  background: rgba(20,22,34,0.85);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:active {
+  transform: scale(0.97);
+  box-shadow: 0 10px 40px rgba(88,101,242,0.5);
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.stats .stat:nth-child(3) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* =========================
+   MODERATOR SECTION
+   ========================= */
+#moderators {
+  max-width: 900px;
+  width: 100%;
+  background: rgba(20,22,34,0.9);
+  backdrop-filter: blur(15px);
+  border-radius: 24px;
+  padding: 30px;
+  margin: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.moderator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+.admin-card,
+.mod-card-secondary {
+  border-radius: 20px; /* rounded rectangles */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  min-height: 120px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-card:hover,
+.mod-card-secondary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+
+/* Center last admin if 3 cards */
+.moderator-grid.admins .admin-card:last-child:nth-child(3) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* =========================
+   FEATURES CARD
+   ========================= */
+.features {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(20,22,34,0.85);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.features:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+}
+.features ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* =========================
+   SERVER RULES
+   ========================= */
+.rules li {
+  position: relative;
+  padding-left: 56px;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  color: #ddd;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: ruleReveal 0.8s ease forwards;
+}
+.rules li:nth-child(1) { animation-delay: 0.1s; }
+.rules li:nth-child(2) { animation-delay: 0.2s; }
+.rules li:nth-child(3) { animation-delay: 0.3s; }
+.rules li:nth-child(4) { animation-delay: 0.4s; }
+.rules li:nth-child(5) { animation-delay: 0.5s; }
+.rules li:nth-child(6) { animation-delay: 0.6s; }
+
+.rules li::before {
+  content: counter(rule);
+  counter-increment: rule;
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #5f6cff, #9b4dff);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(95,108,255,0.6), inset 0 0 6px rgba(255,255,255,0.25);
+}
+.rules li:hover::before {
+  background: linear-gradient(135deg, #ff4d4d, #ff006a);
+  box-shadow: 0 0 20px rgba(255,77,77,0.9), inset 0 0 8px rgba(255,255,255,0.3);
+  transform: scale(1.1) rotate(-3deg);
+}
+.rules li:hover { color: #fff; }
+
+@keyframes rulePulse {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(95,108,255,0.5), inset 0 0 6px rgba(255,255,255,0.2);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(155,77,255,0.9), inset 0 0 10px rgba(255,255,255,0.35);
+  }
+}
+@keyframes ruleReveal { to { opacity: 1; transform: translateY(0); } }
+
+/* =========================
+   MOBILE FIXES
+   ========================= */
+@media(max-width: 768px){
+  .moderator-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center;
+  }
+  .moderator-grid.admins {
+    justify-content: center;
+  }
+  .moderator-grid.admins .admin-card:last-child:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+@media(max-width: 600px){
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    justify-items: center;
+  }
+  .stats .stat:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 200px;
+  }
+
+  .wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .card,
+  .features,
+  .rules,
+  #moderators {
+    width: 100%;
+    max-width: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+  }
+}
