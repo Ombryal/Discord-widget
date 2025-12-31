@@ -573,108 +573,111 @@ body::after {
 .features ul {
   list-style: none;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 /* =========================
-   SERVER RULES
+   MODERATOR CARDS + API STYLING
    ========================= */
-.rules li {
-  position: relative;
-  padding-left: 56px;
-  line-height: 1.7;
-  font-size: 1.05rem;
-  color: #ddd;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: ruleReveal 0.8s ease forwards;
-}
-.rules li:nth-child(1) { animation-delay: 0.1s; }
-.rules li:nth-child(2) { animation-delay: 0.2s; }
-.rules li:nth-child(3) { animation-delay: 0.3s; }
-.rules li:nth-child(4) { animation-delay: 0.4s; }
-.rules li:nth-child(5) { animation-delay: 0.5s; }
-.rules li:nth-child(6) { animation-delay: 0.6s; }
 
-.rules li::before {
-  content: counter(rule);
-  counter-increment: rule;
-  position: absolute;
-  left: 0;
-  top: 0.15em;
-  width: 38px;
-  height: 38px;
+/* Moderator grids */
+.moderator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+/* Admin cards */
+.admin-card, .mod-card-secondary {
+  width: 140px;
+  min-height: 140px;
+  border-radius: 20px;
+  background: rgba(25,28,45,0.85);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  border-radius: 50%;
-  font-weight: 800;
-  font-size: 0.95rem;
-  background: linear-gradient(135deg, #5f6cff, #9b4dff);
-  color: #fff;
-  box-shadow: 0 0 14px rgba(95,108,255,0.6), inset 0 0 6px rgba(255,255,255,0.25);
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
 }
-.rules li:hover::before {
-  background: linear-gradient(135deg, #ff4d4d, #ff006a);
-  box-shadow: 0 0 20px rgba(255,77,77,0.9), inset 0 0 8px rgba(255,255,255,0.3);
-  transform: scale(1.1) rotate(-3deg);
-}
-.rules li:hover { color: #fff; }
 
-@keyframes rulePulse {
-  0%, 100% {
-    box-shadow: 0 0 14px rgba(95,108,255,0.5), inset 0 0 6px rgba(255,255,255,0.2);
-  }
-  50% {
-    box-shadow: 0 0 22px rgba(155,77,255,0.9), inset 0 0 10px rgba(255,255,255,0.35);
-  }
+/* Admin hover/pulse effect */
+.admin-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 15px 35px rgba(88,101,242,0.7);
 }
-@keyframes ruleReveal { to { opacity: 1; transform: translateY(0); } }
+@keyframes adminPulse {
+  0%,100%{transform: scale(1);}
+  50%{transform: scale(1.05);}
+}
+.admin-card {
+  animation: adminPulse 3s infinite;
+}
+
+/* Mod hover effect */
+.mod-card-secondary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* Avatars */
+.mod-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  object-fit: cover;
+  border: 2px solid #5865f2;
+  box-shadow: 0 0 12px rgba(88,101,242,0.6);
+}
+
+/* Names & handles */
+.mod-name { font-weight: 600; font-size: 1rem; color: #fff; }
+.mod-handle { font-size: 0.8rem; opacity: 0.8; color: #b5b8cc; }
+
+/* Light theme overrides */
+body.light .admin-card, body.light .mod-card-secondary { background: rgba(255,255,255,0.9); }
+body.light .mod-name { color: #111; }
+body.light .mod-handle { color: #555; }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .moderator-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-card { width: 130px; min-height: 130px; }
+  .mod-card-secondary { width: 120px; min-height: 120px; }
+  .mod-name { font-size: 0.95rem; }
+  .mod-handle { font-size: 0.8rem; }
+}
 
 /* =========================
-   MOBILE FIXES
+   TOUCH FEEDBACK
    ========================= */
-@media(max-width: 768px){
-  .moderator-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    justify-items: center;
-    align-items: center;
-  }
-  .moderator-grid.admins {
-    justify-content: center;
-  }
-  .moderator-grid.admins .admin-card:last-child:nth-child(3) {
-    grid-column: 1 / -1;
-    justify-self: center;
-  }
+.admin-card:active { transform: scale(0.96); }
+.mod-card-secondary:active { transform: scale(0.95); }
+
+/* =========================
+   BACKGROUND GRADIENT
+   ========================= */
+body::after {
+  content: '';
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: linear-gradient(120deg,#0e0f16,#1c1f2e,#0e0f16);
+  background-size:400% 400%;
+  z-index:-1;
+  pointer-events:none;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  animation: gradientMove 12s linear infinite;
+  opacity:0.05;
 }
 
-@media(max-width: 600px){
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    justify-items: center;
-  }
-  .stats .stat:nth-child(3) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    max-width: 200px;
-  }
-
-  .wrapper {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .card,
-  .features,
-  .rules,
-  #moderators {
-    width: 100%;
-    max-width: none;
-    padding-left: 20px;
-    padding-right: 20px;
-    border-radius: 20px;
-  }
+@keyframes gradientMove {
+  0% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(100%,0,0); }
+  100% { transform: translate3d(0,0,0); }
 }
+
+/* Smooth scroll & over-scroll */
+html, body { overscroll-behavior: contain; scroll-behavior: smooth; }
