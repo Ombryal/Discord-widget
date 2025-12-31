@@ -600,3 +600,123 @@ body.light .rules li::before {
   transform: scale(0.97);
   box-shadow: 0 6px 16px rgba(88,101,242,0.4);
 }
+
+/* =========================
+   LIVE DISCORD ACTIVITY
+   ========================= */
+
+.live-discord {
+  max-width: 1200px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 36px 30px;
+  background: rgba(20,22,34,0.85);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+body.light .live-discord {
+  background: rgba(255,255,255,0.9);
+  color: #111;
+}
+
+/* Heading */
+.live-discord h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #5865f2;
+  text-shadow: 0 0 10px rgba(88,101,242,0.8);
+}
+
+/* Online count */
+.live-stats {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.live-stat {
+  background: rgba(30,32,50,0.9);
+  padding: 18px 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+body.light .live-stat {
+  background: rgba(255,255,255,0.85);
+}
+
+.live-stat span {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+body.light .live-stat span {
+  color: #111;
+}
+
+.live-stat small {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Live members list */
+.live-members {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  padding: 10px 4px;
+  scrollbar-width: none;
+}
+
+.live-members::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual member pill */
+.live-member {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(88,101,242,0.15);
+  border: 1px solid rgba(88,101,242,0.4);
+  color: #fff;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 0 12px rgba(88,101,242,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.light .live-member {
+  color: #111;
+}
+
+.live-member:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(88,101,242,0.8);
+}
+
+/* Mobile tweaks */
+@media (max-width: 700px) {
+  .live-discord {
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+
+  .live-discord h2 {
+    font-size: 1.6rem;
+  }
+
+  .live-stat span {
+    font-size: 1.8rem;
+  }
+
+  .live-members {
+    justify-content: flex-start;
+  }
+}
