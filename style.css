@@ -600,3 +600,222 @@ body.light .rules li::before {
   transform: scale(0.97);
   box-shadow: 0 6px 16px rgba(88,101,242,0.4);
 }
+
+/* =========================
+   SERVER SHOWCASE SECTION
+   ========================= */
+.server-showcase {
+  max-width: 1200px;
+  width: 95%; /* edge-to-edge feel on mobile */
+  margin: 40px auto;
+  background: rgba(20,22,34,0.85);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  overflow: hidden;
+  transform: translateZ(0); /* smooth GPU acceleration */
+}
+
+body.light .server-showcase {
+  background: rgba(255,255,255,0.85);
+  color: #111;
+}
+
+/* Heading */
+.server-showcase h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #5865f2;
+  text-shadow: 0 0 10px rgba(88,101,242,0.8);
+  margin-bottom: 20px;
+}
+
+/* Stats Layout */
+.showcase-stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 16px;
+  text-align: center;
+}
+
+.showcase-stats .stat {
+  flex: 1;
+  min-width: 100px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 16px 10px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.showcase-stats .num {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.showcase-stats .label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* 24/7 central under stats */
+.showcase-active {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 10px;
+  color: #ccc;
+}
+
+/* Admin & Mods Cards Wrapper */
+.showcase-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Inner Card Group (Admins/Mods) */
+.card-group {
+  background: rgba(25,28,45,0.85);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+body.light .card-group {
+  background: rgba(255,255,255,0.9);
+}
+
+/* Admin Card */
+.card-group .admin-card {
+  width: 140px;
+  height: 140px;
+  border: 2px solid #5865f2;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(88,101,242,0.7);
+  cursor: pointer;
+  animation: adminPulse 3s infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-group .admin-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 35px rgba(88,101,242,0.9), 0 15px 35px rgba(0,0,0,0.6);
+}
+
+/* Mods Card */
+.card-group .mod-card-secondary {
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-group .mod-card-secondary:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* Name & handle */
+.card-group .mod-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: #fff;
+}
+.card-group .mod-handle {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  color: #b5b8cc;
+}
+body.light .mod-name { color: #111; }
+body.light .mod-handle { color: #555; }
+
+/* Admin pulse animation */
+@keyframes adminPulse {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.05) translateY(-4px); }
+}
+
+/* Float animation for stats */
+@keyframes float { 0%{transform:translateY(0);} 50%{transform:translateY(-6px);} 100%{transform:translateY(0);} }
+
+/* RULES NUMBERS IN CIRCLES */
+.rules li {
+  position: relative;
+  font-size: 1.05rem;
+  padding-left: 50px;
+  color: #ccc;
+  line-height: 1.6;
+}
+.rules li::before {
+  counter-increment: rule-counter;
+  content: counter(rule-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #5865f2;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* MOBILE LAYOUT FIXES */
+@media(max-width: 600px){
+  .server-showcase {
+    width: 98%;
+    padding: 20px 12px;
+  }
+
+  /* Stats in row with 24/7 below */
+  .showcase-stats {
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 12px;
+  }
+  .showcase-active {
+    margin-top: 8px;
+  }
+
+  /* Admin/Mod cards 2 per row */
+  .card-group {
+    gap: 12px;
+  }
+  .card-group .admin-card {
+    width: 120px;
+    height: 120px;
+  }
+  .card-group .mod-card-secondary {
+    width: 100px;
+    height: 100px;
+  }
+
+  .mod-name { font-size: 0.9rem; }
+  .mod-handle { font-size: 0.7rem; }
+}
