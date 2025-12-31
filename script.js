@@ -1,4 +1,6 @@
+// =========================
 // THEME TOGGLE
+// =========================
 const toggle = document.getElementById("themeToggle");
 
 // Auto theme from system
@@ -15,7 +17,9 @@ toggle.addEventListener("click", () => {
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 });
 
+// =========================
 // STAT ANIMATION
+// =========================
 function animateNumberPlus(element, target = 100, duration = 1500) {
   const start = 0;
   const range = target - start;
@@ -41,7 +45,9 @@ function fetchStats() {
 
 fetchStats();
 
+// =========================
 // SCROLL-TRIGGERED FADE IN
+// =========================
 const scrollElements = document.querySelectorAll(".card, .rules, #moderators, .features");
 
 const elementInView = (el, offset = 0) => {
@@ -65,14 +71,17 @@ const handleScrollAnimation = () => {
 window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
+// =========================
+// DISCORD API – MODERATOR CARDS
+// =========================
 const moderatorsContainer = document.querySelector('#moderators .moderator-grid.admins');
 const modsContainer = document.querySelector('#moderators .moderator-grid.mods');
 
-// Replace with your guild ID
+// Your server widget URL
 const GUILD_ID = '1433645535583277129';
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
 
-// Fetch the widget JSON
+// Fetch Discord members and populate cards
 async function fetchDiscordData() {
   try {
     const res = await fetch(WIDGET_URL);
@@ -82,13 +91,13 @@ async function fetchDiscordData() {
     moderatorsContainer.innerHTML = '';
     modsContainer.innerHTML = '';
 
-    // Example: admins first
-    data.members.forEach(member => {
-      const isAdmin = member.roles && member.roles.includes('Admin'); // If you have roles
-      const isMod = member.roles && member.roles.includes('Mod');
-
+    // Loop through members
+    data.members.forEach((member, index) => {
       const card = document.createElement('div');
-      card.classList.add(isAdmin ? 'admin-card' : 'mod-card-secondary');
+
+      // Determine type: Admin (top 3) or Mod (rest)
+      if (index < 3) card.classList.add('admin-card');
+      else card.classList.add('mod-card-secondary');
 
       // Avatar
       const img = document.createElement('img');
@@ -97,21 +106,21 @@ async function fetchDiscordData() {
       img.classList.add('mod-avatar');
       card.appendChild(img);
 
-      // Name
+      // Username
       const name = document.createElement('div');
       name.classList.add('mod-name');
       name.textContent = member.username;
       card.appendChild(name);
 
-      // Handle / tag
+      // Discriminator
       const handle = document.createElement('div');
       handle.classList.add('mod-handle');
       handle.textContent = `#${member.discriminator}`;
       card.appendChild(handle);
 
-      // Append to correct container
-      if (isAdmin) moderatorsContainer.appendChild(card);
-      else if (isMod) modsContainer.appendChild(card);
+      // Append to proper container
+      if (index < 3) moderatorsContainer.appendChild(card);
+      else modsContainer.appendChild(card);
     });
 
   } catch (err) {
@@ -122,5 +131,17 @@ async function fetchDiscordData() {
 // Initial fetch
 fetchDiscordData();
 
-// Optional: refresh every 60s to update online/offline
+// Auto-refresh every 60s for updated status
 setInterval(fetchDiscordData, 60000);
+
+// =========================
+// CLEAN TOUCH FEEDBACK
+// =========================
+document.querySelectorAll('.admin-card, .mod-card-secondary').forEach(card => {
+  card.addEventListener('touchstart', () => {
+    card.style.transform = 'scale(0.96)';
+  });
+  card.addEventListener('touchend', () => {
+    card.style.transform = '';
+  });
+});
