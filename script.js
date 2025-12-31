@@ -145,3 +145,60 @@ document.querySelectorAll('.admin-card, .mod-card-secondary').forEach(card => {
     card.style.transform = '';
   });
 });
+
+// Containers
+const moderatorsContainer = document.querySelector('#moderators .moderator-grid.admins');
+const modsContainer = document.querySelector('#moderators .moderator-grid.mods');
+
+// Discord widget
+const GUILD_ID = '1433645535583277129';
+const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
+
+async function fetchDiscordData() {
+  try {
+    const res = await fetch(WIDGET_URL);
+    const data = await res.json();
+
+    // Clear current cards
+    moderatorsContainer.innerHTML = '';
+    modsContainer.innerHTML = '';
+
+    data.members.forEach((member, index) => {
+      const card = document.createElement('div');
+
+      // Top 3 highlighted cards
+      if (index < 3) card.classList.add('admin-card');
+      else card.classList.add('mod-card-secondary');
+
+      // Avatar
+      const img = document.createElement('img');
+      img.src = member.avatar_url || `https://cdn.discordapp.com/embed/avatars/${index % 5}.png`;
+      img.alt = member.username;
+      img.classList.add('mod-avatar');
+      card.appendChild(img);
+
+      // Name
+      const name = document.createElement('div');
+      name.classList.add('mod-name');
+      name.textContent = member.username;
+      card.appendChild(name);
+
+      // Discriminator fallback
+      const handle = document.createElement('div');
+      handle.classList.add('mod-handle');
+      handle.textContent = member.discriminator ? `#${member.discriminator}` : `#${member.id.slice(-4)}`;
+      card.appendChild(handle);
+
+      // Append to correct container
+      if (index < 3) moderatorsContainer.appendChild(card);
+      else modsContainer.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error('Failed to fetch Discord widget:', err);
+  }
+}
+
+// Initial fetch + auto-refresh
+fetchDiscordData();
+setInterval(fetchDiscordData, 60000);
