@@ -1,10 +1,15 @@
 /* RESET */
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* BACKGROUND */
+/* BODY & BACKGROUND */
+html, body {
+  height: 100%;
+  overscroll-behavior: contain; /* prevents over-scroll glitches */
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: system-ui, Arial, sans-serif;
-  min-height: 100vh;
   background: linear-gradient(120deg, #0e0f16, #1c1f2e, #0e0f16);
   background-size: 400% 400%;
   animation: gradient 12s ease infinite;
@@ -31,7 +36,7 @@ body.light::before { opacity:0.02; }
   100% { background-position:0% 50%; }
 }
 
-/* THEME BUTTON */
+/* THEME TOGGLE */
 #themeToggle {
   position: fixed; top:16px; right:16px;
   padding: 10px 14px; border-radius:10px; border:none;
@@ -40,9 +45,9 @@ body.light::before { opacity:0.02; }
 }
 
 /* WRAPPER */
-.wrapper { padding:40px; display:flex; flex-direction:column; align-items:center; gap:40px; }
+.wrapper { padding:40px; display:flex; flex-direction:column; align-items:center; gap:40px; padding-bottom:80px; }
 
-/* CARD */
+/* MAIN CARD */
 .card {
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -60,7 +65,7 @@ body.light::before { opacity:0.02; }
 
 body.light .card { background: rgba(255,255,255,0.85); }
 
-/* LEFT */
+/* LEFT SIDE */
 .left h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom:10px; }
 .subtitle { color:#b5b8cc; margin-bottom:30px; }
 body.light .subtitle { color:#555; }
@@ -78,7 +83,7 @@ body.light .subtitle { color:#555; }
 .stat .num { font-size:1.8rem; font-weight:600; }
 .stat .label { font-size:.85rem; opacity:.7; }
 
-/* RIGHT */
+/* RIGHT SIDE */
 .widget { height:560px; border-radius:18px; overflow:hidden; margin-bottom:20px; background:#111; }
 .widget iframe { width:100%; height:100%; border:none; }
 
@@ -92,12 +97,9 @@ body.light .subtitle { color:#555; }
 
 /* BUTTON ROW */
 .button-row {
-  display:flex; justify-content:center; gap:16px; margin-top:20px;
-  flex-wrap:nowrap; /* prevent stacking */
-  overflow-x:auto;
-  padding-bottom:10px;
+  display:flex; justify-content:center; gap:16px; margin-top:10px;
+  flex-wrap:nowrap; overflow-x:auto; padding-bottom:10px;
 }
-
 .button-row::-webkit-scrollbar { height:6px; }
 .button-row::-webkit-scrollbar-thumb { background: rgba(88,101,242,0.5); border-radius:3px; }
 .button-row::-webkit-scrollbar-track { background: transparent; }
@@ -116,20 +118,11 @@ body.light .subtitle { color:#555; }
   box-shadow:0 5px 10px rgba(88,101,242,0.2);
 }
 
-@media(max-width:500px){
-  .interactive-btn {
-    flex:1;
-    min-width:120px;
-  }
-}
-
-/* FEATURES SECTION */
+/* FEATURES CARD */
 .features {
   max-width:800px; width:100%; background: rgba(20,22,34,0.85);
   border-radius:20px; padding:30px; text-align:center;
   box-shadow:0 20px 50px rgba(0,0,0,0.4);
-  opacity:0; transform:translateY(20px);
-  animation: fadeInUp 1s forwards 0.5s;
 }
 .features h2 { font-size:2rem; margin-bottom:20px; }
 .features ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
@@ -137,40 +130,473 @@ body.light .subtitle { color:#555; }
 body.light .features { background: rgba(255,255,255,0.85); color:#111; }
 body.light .features li { color:#333; }
 
-/* COLLAPSIBLE SECTIONS */
-.collapsible {
-  max-width:800px; width:100%; background: rgba(20,22,34,0.85);
-  border-radius:20px; padding:0 30px; margin-top:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.4);
-  overflow:hidden; max-height:0; opacity:0;
-  transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.5s ease;
-}
-.collapsible.active {
-  padding:30px;
-  max-height:1000px;
-  opacity:1;
-}
-.collapsible h2 { font-size:2rem; margin-bottom:20px; }
-.collapsible ol, .collapsible ul { list-style-position: inside; display:flex; flex-direction:column; gap:10px; }
-.collapsible li { font-size:1rem; color:#ccc; }
-
-body.light .collapsible { background: rgba(255,255,255,0.85); color:#111; }
-body.light .collapsible li { color:#333; }
-
-/* FLOAT ANIMATION */
-@keyframes float {
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-6px);}
-  100%{transform:translateY(0);}
+/* MODERATOR SECTION WRAPPER */
+#moderators {
+  max-width: 900px;
+  width: 100%;
+  background: rgba(20,22,34,0.9); /* outer card */
+  backdrop-filter: blur(15px);
+  border-radius: 24px;
+  padding: 30px;
+  margin: 40px 0;
+  box-shadow: 0 0 35px rgba(88,101,242,0.6), 0 15px 50px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
 }
 
-/* FADE IN UP */
-@keyframes fadeInUp {
-  to { opacity:1; transform:translateY(0); }
+body.light #moderators {
+  background: rgba(255,255,255,0.85);
+  color: #111;
 }
 
-/* MOBILE CARD */
+/* Section Heading */
+#moderators h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #5865f2;
+  text-shadow: 0 0 8px rgba(88,101,242,0.8);
+}
+
+/* Inner Cards Container */
+.moderator-inner-card {
+  background: rgba(25,28,45,0.85); /* inner card */
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+}
+
+body.light .moderator-inner-card {
+  background: rgba(255,255,255,0.9);
+  color: #111;
+}
+
+/* Admins & Mods Headings */
+#moderators h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+body.light #moderators h3 { color: #111; }
+
+/* Grid for admin/mod cards */
+.moderator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+/* Admin Card */
+.admin-card {
+  width: 140px;
+  height: 140px;
+  border: 2px solid #5865f2;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(88,101,242,0.7);
+  text-align: center;
+  cursor: pointer;
+  animation: pulse 3s infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(88,101,242,0.9), 0 15px 35px rgba(0,0,0,0.6);
+}
+
+/* Mods Card */
+.mod-card-secondary {
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mod-card-secondary:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* Name & handle */
+.mod-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: #fff;
+}
+.mod-handle {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  color: #b5b8cc;
+}
+
+/* Light theme */
+body.light .mod-name { color: #111; }
+body.light .mod-handle { color: #555; }
+
+/* Pulse Animation for Admins */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Fade in scroll animation */
+#moderators.show { opacity:1; transform: translateY(0); }
+
+/* Mobile Adjustments */
+@media(max-width: 600px){
+  .moderator-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .admin-card { width: 120px; height: 120px; }
+  .mod-card-secondary { width: 100px; height: 100px; }
+  .mod-name { font-size: 0.9rem; }
+  .mod-handle { font-size: 0.7rem; }
+}
+/* RULES CARD */
+.rules {
+  max-width:900px; width:100%;
+  background: rgba(10,10,20,0.85);
+  border-radius:24px;
+  padding:40px 30px;
+  box-shadow:0 0 40px rgba(88,101,242,0.6), 0 15px 60px rgba(0,0,0,0.7);
+  border:1px solid rgba(88,101,242,0.5);
+}
+body.light .rules { background: rgba(255,255,255,0.85); color:#111; border:1px solid rgba(88,101,242,0.4); }
+.rules h2 { font-size:2.2rem; text-align:center; margin-bottom:30px; letter-spacing:1px; color:#5865f2; text-shadow:0 0 12px rgba(88,101,242,0.9); }
+.rules ol { list-style:none; counter-reset:rule-counter; display:flex; flex-direction:column; gap:18px; }
+.rules li { position:relative; font-size:1.05rem; padding-left:50px; line-height:1.5; color:#ccc; transition: transform 0.2s ease, color 0.2s ease; }
+.rules li::before { counter-increment:rule-counter; content:counter(rule-counter); position:absolute; left:0; top:0; font-weight:700; font-size:1.5rem; color:#5865f2; text-shadow:0 0 12px rgba(88,101,242,0.9); }
+.rules li:hover { transform: translateX(8px); color:#fff; text-shadow:0 0 10px rgba(88,101,242,0.8); }
+
+/* FLOAT & PULSE */
+@keyframes float { 0%{transform:translateY(0);} 50%{transform:translateY(-6px);} 100%{transform:translateY(0);} }
+@keyframes adminPulse { 0%,100%{transform: scale(1) translateY(0);} 50%{transform: scale(1.05) translateY(-4px);} }
+@keyframes modShake { 0%,100%{transform:translateY(0) rotate(0);} 25%{transform:translateY(-2px) rotate(-1deg);} 75%{transform:translateY(-2px) rotate(1deg);} }
+
+/* FADE IN */
+@keyframes fadeInUp { to { opacity:1; transform:translateY(0); } }
+
+/* MOBILE */
 @media(max-width:900px){
   .card{grid-template-columns:1fr;padding:28px;}
   .widget{height:480px;}
+  .moderator-grid.admins { grid-template-columns: repeat(2, 1fr); }
+  .moderator-grid.mods { grid-template-columns: repeat(2, 1fr); }
+  .admin-card { width:130px; height:130px; }
+  .mod-card-secondary { width:120px; height:120px; }
+  .mod-name { font-size:0.95rem; }
+  .mod-handle { font-size:0.8rem; }
+  .rules { padding:30px 20px; }
+  .rules li { padding-left:40px; font-size:1rem; }
+  .rules li::before { font-size:1.3rem; }
+}
+
+/* =========================
+   GPU-OPTIMIZED BACKGROUND GRADIENT
+   ========================= */
+
+/* Wrap gradient in a pseudo-element for GPU transform */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(120deg, #0e0f16, #1c1f2e, #0e0f16);
+  background-size: 400% 400%;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  animation: gradientMove 12s linear infinite;
+  opacity: 0.05; /* adjust as needed */
+}
+
+/* Reduce flicker */
+body {
+  background: transparent; /* pseudo-element handles gradient */
+  overflow-x: hidden;
+  /* remove preserve-3d here to fix right-side blank */
+  transform-style: initial;
+  backface-visibility: hidden;
+}
+
+/* Animate gradient with GPU acceleration */
+@keyframes gradientMove {
+  0%   { transform: translate3d(0,0,0); }
+  50%  { transform: translate3d(100%,0,0); }
+  100% { transform: translate3d(0,0,0); }
+}
+
+/* Force GPU acceleration only on moving/animated elements, not grid containers */
+.card,
+.features,
+.rules,
+#moderators,
+.moderator-inner-card,
+.widget {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  /* remove translateZ to avoid layout glitches */
+  transform: none;
+}
+
+/* Smooth scroll & prevent bounce */
+html, body {
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+/* =========================
+        RULES UPGRADE
+   ========================= */
+
+/* Base rules list */
+.rules ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: rule;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Rule item */
+.rules li {
+  position: relative;
+  padding-left: 56px;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  color: #ddd;
+
+  opacity: 0;
+  transform: translateY(20px);
+  animation: ruleReveal 0.8s ease forwards;
+}
+
+/* Stagger reveal */
+.rules li:nth-child(1) { animation-delay: 0.1s; }
+.rules li:nth-child(2) { animation-delay: 0.2s; }
+.rules li:nth-child(3) { animation-delay: 0.3s; }
+.rules li:nth-child(4) { animation-delay: 0.4s; }
+.rules li:nth-child(5) { animation-delay: 0.5s; }
+.rules li:nth-child(6) { animation-delay: 0.6s; }
+
+/* Number circle */
+.rules li::before {
+  content: counter(rule);
+  counter-increment: rule;
+
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.95rem;
+
+  background: linear-gradient(135deg, #5f6cff, #9b4dff);
+  color: #fff;
+
+  box-shadow:
+    0 0 14px rgba(95,108,255,0.6),
+    inset 0 0 6px rgba(255,255,255,0.25);
+
+  animation: rulePulse 4s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+/* Hover: blood oath mode */
+.rules li:hover::before {
+  background: linear-gradient(135deg, #ff4d4d, #ff006a);
+  box-shadow:
+    0 0 20px rgba(255,77,77,0.9),
+    inset 0 0 8px rgba(255,255,255,0.3);
+  transform: scale(1.1) rotate(-3deg);
+}
+
+/* Hover text response */
+.rules li:hover {
+  color: #fff;
+}
+
+/* Pulse animation */
+@keyframes rulePulse {
+  0%, 100% {
+    box-shadow:
+      0 0 14px rgba(95,108,255,0.5),
+      inset 0 0 6px rgba(255,255,255,0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 22px rgba(155,77,255,0.9),
+      inset 0 0 10px rgba(255,255,255,0.35);
+  }
+}
+
+/* Reveal animation */
+@keyframes ruleReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Light mode correction */
+body.light .rules li {
+  color: #222;
+}
+
+body.light .rules li::before {
+  background: linear-gradient(135deg, #3a46ff, #7a3cff);
+}
+
+/* =========================
+   MOBILE GRID FIX – ADMINS
+   ========================= */
+
+@media (max-width: 768px) {
+
+  /* Ensure grid centers items */
+  .moderator-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center;
+  }
+
+  /* Admins specifically */
+  .moderator-grid.admins {
+    justify-content: center;
+  }
+
+  /* If odd number of admin cards, center the last one */
+  .moderator-grid.admins .admin-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1; /* span full row */
+    justify-self: center;
+  }
+}
+
+/* =========================
+   MOBILE STATS FIX
+   ========================= */
+
+@media (max-width: 600px) {
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    justify-items: center;
+  }
+
+  /* First two stats stay side by side */
+  .stats .stat:nth-child(1),
+  .stats .stat:nth-child(2) {
+    grid-column: span 1;
+  }
+
+  /* Third stat centered below */
+  .stats .stat:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 200px;
+  }
+}
+
+/* =========================
+   MOBILE EDGE-TO-EDGE CARD
+   ========================= */
+
+@media (max-width: 600px) {
+
+  .wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .card,
+  .features,
+  .rules,
+  #moderators {
+    width: 100%;
+    max-width: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px; /* still premium, not brick */
+  }
+
+  /* Make main hero card feel wider */
+  .card {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* =========================
+   REMOVE MOBILE TAP HIGHLIGHT
+   ========================= */
+
+.admin-card,
+.mod-card-secondary,
+.interactive-btn,
+.join {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* =========================
+   CLEAN TOUCH FEEDBACK
+   ========================= */
+
+/* Admin touch feedback */
+.admin-card:active {
+  transform: scale(0.96);
+  box-shadow:
+    0 0 25px rgba(88,101,242,0.9),
+    0 0 60px rgba(88,101,242,0.4);
+}
+
+/* Mod touch feedback */
+.mod-card-secondary:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* Buttons */
+.interactive-btn:active,
+.join:active {
+  transform: scale(0.97);
+  box-shadow: 0 6px 16px rgba(88,101,242,0.4);
 }
