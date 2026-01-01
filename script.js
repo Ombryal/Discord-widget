@@ -1,5 +1,5 @@
 // =======================
-// THEME TOGGLE
+// THEME TOGGLE - FIXED
 // =======================
 const toggle = document.getElementById("themeToggle");
 
@@ -15,7 +15,13 @@ if (!localStorage.theme) {
 toggle.addEventListener("click", () => {
   document.body.classList.toggle("light");
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
+  
+  // Update toggle button text
+  toggle.textContent = document.body.classList.contains("light") ? "🌙 / ☀" : "☀ / 🌙";
 });
+
+// Initialize toggle button text
+toggle.textContent = document.body.classList.contains("light") ? "🌙 / ☀" : "☀ / 🌙";
 
 // =======================
 // MEMBERS NUMBER ANIMATION
@@ -41,9 +47,23 @@ const membersEl = document.getElementById("members");
 if (membersEl) animateNumberPlus(membersEl);
 
 // =======================
-// SCROLL TRIGGERED FADE-IN
+// SCROLL TRIGGERED FADE-IN - FIXED FOR MOBILE
 // =======================
-const scrollElements = document.querySelectorAll(".card, .rules, #moderators, .features");
+const scrollElements = document.querySelectorAll(".card, .rules, .features");
+
+// Remove moderators from scroll animation since we're forcing it visible
+const moderatorsSection = document.getElementById("moderators");
+if (moderatorsSection) {
+  moderatorsSection.style.opacity = "1";
+  moderatorsSection.style.transform = "translateY(0)";
+}
+
+// Remove stats from scroll animation
+const statsElement = document.querySelector('.stats');
+if (statsElement) {
+  statsElement.style.opacity = "1";
+  statsElement.style.transform = "none";
+}
 
 const elementInView = (el, offset = 0) => {
   const elementTop = el.getBoundingClientRect().top;
@@ -63,11 +83,21 @@ const handleScrollAnimation = () => {
   });
 };
 
-window.addEventListener("scroll", handleScrollAnimation);
+// Throttle scroll events for performance
+let scrollTimeout;
+window.addEventListener("scroll", () => {
+  if (!scrollTimeout) {
+    scrollTimeout = setTimeout(() => {
+      handleScrollAnimation();
+      scrollTimeout = null;
+    }, 100);
+  }
+});
+
 window.addEventListener("load", handleScrollAnimation);
 
 // =======================
-// DISCORD ONLINE COUNT & MEMBER CAROUSEL
+// DISCORD ONLINE COUNT & MEMBER CAROUSEL - FIXED FOR MOBILE
 // =======================
 const GUILD_ID = "1433645535583277129";
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
@@ -90,9 +120,10 @@ class MembersCarousel {
     this.interval = null;
     this.rotationInterval = 8000; // 8 seconds per batch
     this.rotationAngle = 0;
-    this.rotationSpeed = 1; // degrees per frame
+    this.rotationSpeed = 0.5; // Reduced speed for mobile
     this.animationId = null;
     this.isRotating = true;
+    this.isMobile = window.innerWidth <= 600;
   }
 
   async init() {
@@ -100,6 +131,14 @@ class MembersCarousel {
     this.setupCarousel();
     this.startContinuousRotation();
     this.startBatchRotation();
+    
+    // Update mobile detection on resize
+    window.addEventListener('resize', () => {
+      this.isMobile = window.innerWidth <= 600;
+      if (this.orbitElement) {
+        this.positionMembers();
+      }
+    });
   }
 
   async loadMembers() {
@@ -206,6 +245,28 @@ class MembersCarousel {
     }
   }
 
+  calculateOrbitDimensions() {
+    if (!this.orbitElement) return { width: 400, height: 400 };
+    
+    const containerRect = this.container.getBoundingClientRect();
+    const maxSize = Math.min(containerRect.width, containerRect.height) * 0.8;
+    
+    // Adjust for mobile
+    if (this.isMobile) {
+      return {
+        width: Math.min(300, maxSize),
+        height: Math.min(300, maxSize),
+        radius: Math.min(300, maxSize) * 0.4
+      };
+    }
+    
+    return {
+      width: Math.min(400, maxSize),
+      height: Math.min(400, maxSize),
+      radius: Math.min(400, maxSize) * 0.4
+    };
+  }
+
   positionMembers() {
     if (!this.orbitElement) return;
     
@@ -223,19 +284,24 @@ class MembersCarousel {
       displayedMembers.push(...extraMembers);
     }
     
-    // Calculate positions for circular layout
-    const radius = 160; // Distance from center
-    const centerX = 200; // Half of orbit-container width
-    const centerY = 200; // Half of orbit-container height
+    // Calculate dimensions based on screen size
+    const dimensions = this.calculateOrbitDimensions();
+    const radius = dimensions.radius;
+    const centerX = dimensions.width / 2;
+    const centerY = dimensions.height / 2;
     const angleStep = (2 * Math.PI) / displayedMembers.length;
+    
+    // Adjust profile size for mobile
+    const profileSize = this.isMobile ? 70 : 90;
+    const avatarSize = this.isMobile ? 50 : 70;
     
     // Create member profiles at calculated positions
     displayedMembers.forEach((member, index) => {
       const angle = index * angleStep + this.rotationAngle * (Math.PI / 180);
-      const x = centerX + radius * Math.cos(angle) - 45; // 45 = half of profile width
-      const y = centerY + radius * Math.sin(angle) - 45; // 45 = half of profile height
+      const x = centerX + radius * Math.cos(angle) - (profileSize / 2);
+      const y = centerY + radius * Math.sin(angle) - (profileSize / 2);
       
-      const profile = this.createMemberProfile(member, index);
+      const profile = this.createMemberProfile(member, index, profileSize, avatarSize);
       profile.style.left = `${x}px`;
       profile.style.top = `${y}px`;
       
@@ -250,10 +316,12 @@ class MembersCarousel {
     this.updateActiveDot();
   }
 
-  createMemberProfile(member, index) {
+  createMemberProfile(member, index, profileSize = 90, avatarSize = 70) {
     const profile = document.createElement('div');
     profile.className = 'member-profile';
     profile.dataset.id = member.id;
+    profile.style.width = `${profileSize}px`;
+    profile.style.height = `${profileSize}px`;
     
     // Get color for avatar background
     const colorIndex = index % avatarColors.length;
@@ -266,7 +334,7 @@ class MembersCarousel {
     }
     
     profile.innerHTML = `
-      <div class="member-avatar" style="background: ${bgColor}">
+      <div class="member-avatar" style="background: ${bgColor}; width: ${avatarSize}px; height: ${avatarSize}px; font-size: ${avatarSize * 0.4}px">
         ${avatarContent}
       </div>
       <div class="member-name">${member.name}</div>
@@ -327,15 +395,17 @@ class MembersCarousel {
     const profiles = this.orbitElement.querySelectorAll('.member-profile');
     if (profiles.length === 0) return;
     
-    const radius = 160;
-    const centerX = 200;
-    const centerY = 200;
+    const dimensions = this.calculateOrbitDimensions();
+    const radius = dimensions.radius;
+    const centerX = dimensions.width / 2;
+    const centerY = dimensions.height / 2;
     const angleStep = (2 * Math.PI) / profiles.length;
+    const profileSize = this.isMobile ? 70 : 90;
     
     profiles.forEach((profile, index) => {
       const angle = index * angleStep + this.rotationAngle * (Math.PI / 180);
-      const x = centerX + radius * Math.cos(angle) - 45;
-      const y = centerY + radius * Math.sin(angle) - 45;
+      const x = centerX + radius * Math.cos(angle) - (profileSize / 2);
+      const y = centerY + radius * Math.sin(angle) - (profileSize / 2);
       
       profile.style.left = `${x}px`;
       profile.style.top = `${y}px`;
@@ -433,6 +503,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     carouselContainer.addEventListener('mouseleave', () => {
       carousel.resumeRotation();
+    });
+    
+    // Touch events for mobile
+    carouselContainer.addEventListener('touchstart', () => {
+      carousel.stopRotation();
+    });
+    
+    carouselContainer.addEventListener('touchend', () => {
+      setTimeout(() => carousel.resumeRotation(), 1000);
     });
   }
 });
