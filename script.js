@@ -52,14 +52,8 @@ window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
 // =======================
-// DISCORD WIDGET & ORBIT
+// DISCORD WIDGET & ORBIT FIXED
 // =======================
-const GUILD_ID = "1433645535583277129";
-const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
-
-const onlineEl = document.getElementById("online");
-const orbitContainer = document.getElementById("memberOrbit");
-
 async function fetchDiscordWidget() {
   try {
     const res = await fetch(WIDGET_URL);
@@ -72,43 +66,60 @@ async function fetchDiscordWidget() {
       onlineEl.textContent = data.presence_count;
     }
 
+    // ---- ORBIT MEMBERS ----
+    if (!orbitContainer || !Array.isArray(data.members) || data.members.length === 0) return;
+
+    orbitContainer.innerHTML = ""; // clear old members
+
+    const members = data.members.slice(0, 6);
     const radius = window.innerWidth < 600 ? 70 : 95;
-const members = data.members.slice(0, 6);
-const step = (2 * Math.PI) / members.length;
+    const step = (2 * Math.PI) / members.length;
 
-members.forEach((m, i) => {
-  const angle = step * i;
+    members.forEach((m, i) => {
+      const angle = step * i;
 
-  const el = document.createElement("div");
-  el.className = "orbit-member";
+      const el = document.createElement("div");
+      el.className = "orbit-member";
 
-  // position in circle
-  el.style.transform = `rotate(${angle}rad) translate(${radius}px) rotate(${-angle}rad)`;
+      // position in circle
+      el.style.transform = `rotate(${angle}rad) translate(${radius}px) rotate(${-angle}rad)`;
 
-  const avatarWrap = document.createElement("div");
-  avatarWrap.className = "orbit-avatar";
+      const avatarWrap = document.createElement("div");
+      avatarWrap.className = "orbit-avatar";
 
-  const img = document.createElement("img");
-  img.src = m.avatar_url;
-  img.alt = m.username;
+      const img = document.createElement("img");
+      img.src = m.avatar_url;
+      img.alt = m.username;
 
-  const status = document.createElement("span");
-  status.className = `orbit-status status-${m.status || "online"}`;
+      const status = document.createElement("span");
+      status.className = `orbit-status status-${m.status || "online"}`;
 
-  avatarWrap.appendChild(img);
-  avatarWrap.appendChild(status);
+      avatarWrap.appendChild(img);
+      avatarWrap.appendChild(status);
 
-  const name = document.createElement("span");
-  name.textContent = m.username;
+      const name = document.createElement("span");
+      name.textContent = m.username;
 
-  el.appendChild(avatarWrap);
-  el.appendChild(name);
-  orbitContainer.appendChild(el);
+      el.appendChild(avatarWrap);
+      el.appendChild(name);
+      orbitContainer.appendChild(el);
 
-  // make it spin slowly around center
-  let rotation = angle;
-  setInterval(() => {
-    rotation += 0.01; // speed, tweak if too slow/fast
-    el.style.transform = `rotate(${rotation}rad) translate(${radius}px) rotate(${-rotation}rad)`;
-  }, 16); // ~60fps
-});
+      // spin each member individually
+      let rotation = angle;
+      const intervalId = setInterval(() => {
+        rotation += 0.01;
+        if (!document.body.contains(el)) { // stop if element removed
+          clearInterval(intervalId);
+          return;
+        }
+        el.style.transform = `rotate(${rotation}rad) translate(${radius}px) rotate(${-rotation}rad)`;
+      }, 16);
+    });
+
+  } catch (err) {
+    console.error("Discord widget error:", err);
+  }
+}
+
+fetchDiscordWidget();
+setInterval(fetchDiscordWidget, 60000);
