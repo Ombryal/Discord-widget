@@ -72,58 +72,43 @@ async function fetchDiscordWidget() {
       onlineEl.textContent = data.presence_count;
     }
 
-    // ---- ORBIT MEMBERS ----
-    if (!orbitContainer || !Array.isArray(data.members)) return;
-    orbitContainer.innerHTML = "";
-
-    const members = data.members.slice(0, 6);
-    if (members.length === 0) return;
-
-    const center = orbitContainer.offsetWidth / 2;
     const radius = window.innerWidth < 600 ? 70 : 95;
-    const step = (2 * Math.PI) / members.length;
+const members = data.members.slice(0, 6);
+const step = (2 * Math.PI) / members.length;
 
-    members.forEach((m, i) => {
-      const angle = step * i;
+members.forEach((m, i) => {
+  const angle = step * i;
 
-      const el = document.createElement("div");
-      el.className = "orbit-member";
+  const el = document.createElement("div");
+  el.className = "orbit-member";
 
-      // Compute x and y for perfect circle
-      const x = center + radius * Math.cos(angle) - 30; // 30 = half width of orbit-member
-      const y = center + radius * Math.sin(angle) - 30; // 30 = half height
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
+  // position in circle
+  el.style.transform = `rotate(${angle}rad) translate(${radius}px) rotate(${-angle}rad)`;
 
-      // Avatar + status
-      const avatarWrap = document.createElement("div");
-      avatarWrap.className = "orbit-avatar";
+  const avatarWrap = document.createElement("div");
+  avatarWrap.className = "orbit-avatar";
 
-      const img = document.createElement("img");
-      img.src = m.avatar_url;
-      img.alt = m.username;
+  const img = document.createElement("img");
+  img.src = m.avatar_url;
+  img.alt = m.username;
 
-      const status = document.createElement("span");
-      status.className = `orbit-status status-${m.status || "online"}`;
+  const status = document.createElement("span");
+  status.className = `orbit-status status-${m.status || "online"}`;
 
-      avatarWrap.appendChild(img);
-      avatarWrap.appendChild(status);
+  avatarWrap.appendChild(img);
+  avatarWrap.appendChild(status);
 
-      // Username
-      const name = document.createElement("span");
-      name.textContent = m.username;
-      name.style.fontSize = "0.65rem";
-      name.style.marginTop = "2px";
+  const name = document.createElement("span");
+  name.textContent = m.username;
 
-      el.appendChild(avatarWrap);
-      el.appendChild(name);
-      orbitContainer.appendChild(el);
-    });
+  el.appendChild(avatarWrap);
+  el.appendChild(name);
+  orbitContainer.appendChild(el);
 
-  } catch (err) {
-    console.error("Discord widget error:", err);
-  }
-}
-
-fetchDiscordWidget();
-setInterval(fetchDiscordWidget, 60000);
+  // make it spin slowly around center
+  let rotation = angle;
+  setInterval(() => {
+    rotation += 0.01; // speed, tweak if too slow/fast
+    el.style.transform = `rotate(${rotation}rad) translate(${radius}px) rotate(${-rotation}rad)`;
+  }, 16); // ~60fps
+});
