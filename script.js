@@ -175,81 +175,74 @@ setInterval(renderMemberBatch, 5000);
 fetchMembers();
 
 // =======================
-// ORBITING ONLINE MEMBERS
+// DISCORD WIDGET (SAFE)
 // =======================
 
 const GUILD_ID = "1433645535583277129";
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
-const memberList = document.getElementById("memberList");
 
-async function loadOrbitMembers() {
+const onlineEl = document.getElementById("online");
+const orbitContainer = document.getElementById("memberOrbit");
+
+async function fetchDiscordWidget() {
   try {
     const res = await fetch(WIDGET_URL);
     if (!res.ok) throw new Error("Widget fetch failed");
 
     const data = await res.json();
-    if (!data.members || !memberList) return;
 
-    memberList.innerHTML = "";
+    /* ---- ONLINE COUNT ---- */
+    if (onlineEl && typeof data.presence_count === "number") {
+      onlineEl.textContent = data.presence_count;
+    }
 
-    // Limit for sanity
+    /* ---- ORBIT MEMBERS ---- */
+    if (!orbitContainer || !Array.isArray(data.members)) return;
+
+    orbitContainer.innerHTML = "";
+
     const members = data.members.slice(0, 6);
-    const radius = window.innerWidth < 600 ? 80 : 100;
-    const angleStep = (2 * Math.PI) / members.length;
+    if (members.length === 0) return;
 
-    members.forEach((member, index) => {
-      const angle = angleStep * index;
+    const radius = window.innerWidth < 600 ? 75 : 95;
+    const step = (2 * Math.PI) / members.length;
 
-      const pill = document.createElement("div");
-      pill.className = "member";
-      pill.style.transform = `
+    members.forEach((m, i) => {
+      const angle = step * i;
+
+      const el = document.createElement("div");
+      el.className = "orbit-member";
+      el.style.transform = `
         rotate(${angle}rad)
         translate(${radius}px)
         rotate(-${angle}rad)
       `;
 
-      // Avatar wrapper
       const avatarWrap = document.createElement("div");
-      avatarWrap.className = "member-avatar";
+      avatarWrap.className = "orbit-avatar";
 
       const img = document.createElement("img");
-      img.src = member.avatar_url;
-      img.alt = member.username;
+      img.src = m.avatar_url;
+      img.alt = m.username;
 
-      // Status dot
       const status = document.createElement("span");
-      status.className = "status-dot";
-
-      switch (member.status) {
-        case "online":
-          status.classList.add("status-online");
-          break;
-        case "idle":
-          status.classList.add("status-idle");
-          break;
-        case "dnd":
-          status.classList.add("status-dnd");
-          break;
-        default:
-          status.classList.add("status-offline");
-      }
+      status.className = "orbit-status status-online";
 
       avatarWrap.appendChild(img);
       avatarWrap.appendChild(status);
 
       const name = document.createElement("span");
-      name.textContent = member.username;
+      name.textContent = m.username;
 
-      pill.appendChild(avatarWrap);
-      pill.appendChild(name);
-      memberList.appendChild(pill);
+      el.appendChild(avatarWrap);
+      el.appendChild(name);
+      orbitContainer.appendChild(el);
     });
 
-  } catch (err) {
-    console.error("Orbit member load failed:", err);
+  } catch (e) {
+    console.error("Discord widget error:", e);
   }
 }
 
-// Initial + refresh
-loadOrbitMembers();
-setInterval(loadOrbitMembers, 60000);
+fetchDiscordWidget();
+setInterval(fetchDiscordWidget, 60000);
