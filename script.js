@@ -52,7 +52,7 @@ window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
 // =======================
-// DISCORD WIDGET & ORBIT FIXED
+// DISCORD WIDGET & ORBIT + ONLINE LIST FIXED
 // =======================
 async function fetchDiscordWidget() {
   try {
@@ -66,12 +66,36 @@ async function fetchDiscordWidget() {
       onlineEl.textContent = data.presence_count;
     }
 
-    // ---- ORBIT MEMBERS ----
-    if (!orbitContainer || !Array.isArray(data.members) || data.members.length === 0) return;
+    if (!Array.isArray(data.members) || data.members.length === 0) return;
 
+    // ---- ONLINE RIGHT NOW LIST ----
+    const memberList = document.getElementById("memberList");
+    if (memberList) {
+      memberList.innerHTML = "";
+      data.members.slice(0, 10).forEach(m => { // show up to 10 in list
+        const div = document.createElement("div");
+        div.className = "member-card";
+
+        const img = document.createElement("img");
+        img.className = "member-avatar";
+        img.src = m.avatar_url;
+        img.alt = m.username;
+
+        const name = document.createElement("span");
+        name.className = "member-name";
+        name.textContent = m.username;
+
+        div.appendChild(img);
+        div.appendChild(name);
+        memberList.appendChild(div);
+      });
+    }
+
+    // ---- ORBIT MEMBERS ----
+    if (!orbitContainer) return;
     orbitContainer.innerHTML = ""; // clear old members
 
-    const members = data.members.slice(0, 6);
+    const members = data.members.slice(0, 6); // limit orbit to 6
     const radius = window.innerWidth < 600 ? 70 : 95;
     const step = (2 * Math.PI) / members.length;
 
@@ -103,6 +127,26 @@ async function fetchDiscordWidget() {
       el.appendChild(avatarWrap);
       el.appendChild(name);
       orbitContainer.appendChild(el);
+
+      // spin each member individually
+      let rotation = angle;
+      const intervalId = setInterval(() => {
+        rotation += 0.01;
+        if (!document.body.contains(el)) { // stop if element removed
+          clearInterval(intervalId);
+          return;
+        }
+        el.style.transform = `rotate(${rotation}rad) translate(${radius}px) rotate(${-rotation}rad)`;
+      }, 16);
+    });
+
+  } catch (err) {
+    console.error("Discord widget error:", err);
+  }
+}
+
+fetchDiscordWidget();
+setInterval(fetchDiscordWidget, 60000);
 
       // spin each member individually
       let rotation = angle;
