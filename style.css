@@ -165,20 +165,155 @@ body.light .subtitle {
 }
 
 /* =========================
-   RIGHT SIDE (WIDGET)
+   ONLINE MEMBERS CAROUSEL
    ========================= */
-.widget {
+.online-members {
   height: 560px;
   border-radius: 18px;
   overflow: hidden;
   margin-bottom: 20px;
-  background: #111;
+  background: rgba(15, 16, 25, 0.9);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 40px rgba(88, 101, 242, 0.4);
+  border: 1px solid rgba(88, 101, 242, 0.3);
 }
 
-.widget iframe {
+.carousel-title {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #5865f2;
+  text-shadow: 0 0 10px rgba(88, 101, 242, 0.7);
+  z-index: 2;
+  padding: 10px;
+}
+
+.members-carousel {
   width: 100%;
   height: 100%;
-  border: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.member-profile {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5865f2, #9b4dff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.5s ease;
+  z-index: 1;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.member-profile.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.member-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #1e212e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-name {
+  position: absolute;
+  bottom: -25px;
+  font-size: 0.8rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.member-profile:hover .member-name {
+  opacity: 1;
+}
+
+.member-status {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid #1e212e;
+}
+
+.status-online {
+  background: #3ba55d;
+}
+
+.status-idle {
+  background: #faa81a;
+}
+
+.status-dnd {
+  background: #ed4245;
+}
+
+/* Carousel controls */
+.carousel-controls {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 2;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+  background: #5865f2;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(88, 101, 242, 0.8);
+}
+
+/* Loading animation */
+.loading-text {
+  position: absolute;
+  color: #b5b8cc;
+  font-size: 1.2rem;
+  animation: pulse 2s infinite;
 }
 
 /* =========================
@@ -399,7 +534,7 @@ body.light #moderators h3 {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
-  padding: 8px; /* Added padding to prevent text overflow */
+  padding: 8px;
 }
 
 .mod-card-secondary:hover {
@@ -410,22 +545,22 @@ body.light #moderators h3 {
 /* Name & handle - UPDATED FOR BETTER TEXT FITTING */
 .mod-name {
   font-weight: 600;
-  font-size: 0.9rem; /* Slightly smaller to fit longer names */
+  font-size: 0.9rem;
   margin-bottom: 4px;
   color: #fff;
   line-height: 1.2;
-  word-break: break-word; /* Allow breaking long names */
+  word-break: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
   padding: 0 4px;
 }
 
 .mod-handle {
-  font-size: 0.75rem; /* Slightly smaller for better fit */
+  font-size: 0.75rem;
   opacity: 0.8;
   color: #b5b8cc;
   line-height: 1.2;
-  word-break: break-all; /* Handle long Discord handles */
+  word-break: break-all;
   overflow-wrap: break-word;
   max-width: 100%;
   padding: 0 4px;
@@ -554,7 +689,7 @@ body.light .rules li::before {
 }
 
 /* =========================
-   ANIMATIONS (DEDUPLICATED)
+   ANIMATIONS
    ========================= */
 @keyframes float {
   0% { transform: translateY(0); }
@@ -563,8 +698,8 @@ body.light .rules li::before {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
 }
 
 @keyframes fadeInUp {
@@ -588,6 +723,16 @@ body.light .rules li::before {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(200px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
+}
+
+@keyframes orbit2 {
+  0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
 }
 
 /* =========================
@@ -627,8 +772,18 @@ body.light .rules li::before {
     padding: 28px;
   }
   
-  .widget {
+  .online-members {
     height: 480px;
+  }
+  
+  .member-profile {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .member-avatar {
+    width: 70px;
+    height: 70px;
   }
   
   .moderator-grid.admins {
@@ -710,7 +865,27 @@ body.light .rules li::before {
     max-width: 200px;
   }
   
-  /* Moderator grid - RESTORED TO ORIGINAL MOBILE SIZES */
+  /* Online members carousel mobile */
+  .online-members {
+    height: 400px;
+  }
+  
+  .member-profile {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .member-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .member-name {
+    font-size: 0.7rem;
+    bottom: -20px;
+  }
+  
+  /* Moderator grid */
   .moderator-grid {
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
@@ -756,6 +931,29 @@ body.light .rules li::before {
   #moderators {
     padding-left: 16px;
     padding-right: 16px;
+  }
+  
+  .online-members {
+    height: 350px;
+  }
+  
+  .member-profile {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .member-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .member-name {
+    font-size: 0.6rem;
+    bottom: -18px;
+  }
+  
+  .carousel-title {
+    font-size: 1.2rem;
   }
   
   .admin-card {
