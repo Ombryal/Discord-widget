@@ -64,3 +64,33 @@ const handleScrollAnimation = () => {
 
 window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
+
+// =======================
+// DISCORD ONLINE COUNT ONLY
+// =======================
+const GUILD_ID = "1433645535583277129";
+const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
+
+async function fetchOnlineCount() {
+  try {
+    const res = await fetch(WIDGET_URL);
+    if (!res.ok) throw new Error("Widget fetch failed");
+
+    const data = await res.json();
+
+    const onlineEl = document.getElementById("online");
+    if (!onlineEl) return;
+
+    // Optional: smooth number change
+    onlineEl.textContent = data.presence_count;
+
+  } catch (err) {
+    console.error("Discord API error:", err);
+  }
+}
+
+// Initial load
+fetchOnlineCount();
+
+// Refresh every 60 seconds
+setInterval(fetchOnlineCount, 60000);
