@@ -86,7 +86,7 @@ class MembersCarousel {
     this.members = [];
     this.currentIndex = 0;
     this.displayCount = 6;
-    this.orbitElement = null;
+    this.circleElement = null;
     this.interval = null;
     this.rotationInterval = 8000; // 8 seconds per batch
   }
@@ -177,10 +177,10 @@ class MembersCarousel {
     const loadingText = this.container.querySelector('.loading-text');
     if (loadingText) loadingText.style.display = 'none';
     
-    // Create orbit container
-    this.orbitElement = document.createElement('div');
-    this.orbitElement.className = 'member-orbit';
-    this.container.querySelector('.carousel-track').appendChild(this.orbitElement);
+    // Create circle container
+    this.circleElement = document.createElement('div');
+    this.circleElement.className = 'circle-container rotating';
+    this.container.appendChild(this.circleElement);
     
     // Create member profiles
     this.updateDisplayedMembers();
@@ -202,10 +202,10 @@ class MembersCarousel {
   }
 
   updateDisplayedMembers() {
-    if (!this.orbitElement) return;
+    if (!this.circleElement) return;
     
     // Clear existing members
-    this.orbitElement.innerHTML = '';
+    this.circleElement.innerHTML = '';
     
     // Get current batch of members
     const startIndex = this.currentIndex * this.displayCount;
@@ -221,7 +221,7 @@ class MembersCarousel {
     // Create member profiles
     displayedMembers.forEach((member, index) => {
       const profile = this.createMemberProfile(member, index);
-      this.orbitElement.appendChild(profile);
+      this.circleElement.appendChild(profile);
     });
     
     // Update active dot
@@ -260,7 +260,7 @@ class MembersCarousel {
     this.currentIndex = (batchIndex + totalBatches) % totalBatches;
     
     // Animate out current members
-    const currentProfiles = this.orbitElement.querySelectorAll('.member-profile');
+    const currentProfiles = this.circleElement.querySelectorAll('.member-profile');
     currentProfiles.forEach((profile, index) => {
       profile.style.animation = 'slideOut 0.5s ease forwards';
     });
@@ -353,24 +353,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Refresh online count every 60 seconds
   setInterval(fetchOnlineCount, 60000);
-  
-  // Pause rotation on hover
-  const carouselContainer = document.querySelector('.online-members');
-  if (carouselContainer) {
-    carouselContainer.addEventListener('mouseenter', () => {
-      carousel.stopRotation();
-      // Also pause CSS animation
-      const orbit = carouselContainer.querySelector('.member-orbit');
-      if (orbit) orbit.style.animationPlayState = 'paused';
-    });
-    
-    carouselContainer.addEventListener('mouseleave', () => {
-      carousel.startBatchRotation();
-      // Resume CSS animation
-      const orbit = carouselContainer.querySelector('.member-orbit');
-      if (orbit) orbit.style.animationPlayState = 'running';
-    });
-  }
 });
 
 // Refresh members periodically
