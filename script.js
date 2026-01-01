@@ -86,14 +86,19 @@ class MembersCarousel {
     this.members = [];
     this.currentIndex = 0;
     this.displayCount = 6;
-    this.circleElement = null;
+    this.orbitElement = null;
     this.interval = null;
     this.rotationInterval = 8000; // 8 seconds per batch
+    this.rotationAngle = 0;
+    this.rotationSpeed = 1; // degrees per frame
+    this.animationId = null;
+    this.isRotating = true;
   }
 
   async init() {
     await this.loadMembers();
     this.setupCarousel();
+    this.startContinuousRotation();
     this.startBatchRotation();
   }
 
@@ -102,11 +107,11 @@ class MembersCarousel {
       const response = await fetch(WIDGET_URL);
       const data = await response.json();
       
-      // Get online members from Discord API
+      // Get members from Discord API
       if (data.members) {
-        // Filter for online members and map to our format
+        // Include all members (online and offline)
         this.members = data.members
-          .filter(member => !member.bot) // Include both online and offline
+          .filter(member => !member.bot)
           .map((member, index) => ({
             id: member.id || index,
             name: member.username || `User${index}`,
@@ -177,13 +182,13 @@ class MembersCarousel {
     const loadingText = this.container.querySelector('.loading-text');
     if (loadingText) loadingText.style.display = 'none';
     
-    // Create circle container
-    this.circleElement = document.createElement('div');
-    this.circleElement.className = 'circle-container rotating';
-    this.container.appendChild(this.circleElement);
+    // Create orbit container
+    this.orbitElement = document.createElement('div');
+    this.orbitElement.className = 'orbit-container';
+    this.container.appendChild(this.orbitElement);
     
     // Create member profiles
-    this.updateDisplayedMembers();
+    this.positionMembers();
     
     // Create controls if we have multiple batches
     this.createControls();
@@ -201,11 +206,11 @@ class MembersCarousel {
     }
   }
 
-  updateDisplayedMembers() {
-    if (!this.circleElement) return;
+  positionMembers() {
+    if (!this.orbitElement) return;
     
     // Clear existing members
-    this.circleElement.innerHTML = '';
+    this.orbitElement.innerHTML = '';
     
     // Get current batch of members
     const startIndex = this.currentIndex * this.displayCount;
@@ -218,10 +223,27 @@ class MembersCarousel {
       displayedMembers.push(...extraMembers);
     }
     
-    // Create member profiles
+    // Calculate positions for circular layout
+    const radius = 160; // Distance from center
+    const centerX = 200; // Half of orbit-container width
+    const centerY = 200; // Half of orbit-container height
+    const angleStep = (2 * Math.PI) / displayedMembers.length;
+    
+    // Create member profiles at calculated positions
     displayedMembers.forEach((member, index) => {
+      const angle = index * angleStep + this.rotationAngle * (Math.PI / 180);
+      const x = centerX + radius * Math.cos(angle) - 45; // 45 = half of profile width
+      const y = centerY + radius * Math.sin(angle) - 45; // 45 = half of profile height
+      
       const profile = this.createMemberProfile(member, index);
-      this.circleElement.appendChild(profile);
+      profile.style.left = `${x}px`;
+      profile.style.top = `${y}px`;
+      
+      // Add with delay for staggered appearance
+      setTimeout(() => {
+        profile.style.animation = 'fadeInProfile 0.8s ease forwards';
+        this.orbitElement.appendChild(profile);
+      }, index * 150);
     });
     
     // Update active dot
@@ -260,15 +282,18 @@ class MembersCarousel {
     this.currentIndex = (batchIndex + totalBatches) % totalBatches;
     
     // Animate out current members
-    const currentProfiles = this.circleElement.querySelectorAll('.member-profile');
+    const currentProfiles = this.orbitElement.querySelectorAll('.member-profile');
     currentProfiles.forEach((profile, index) => {
       profile.style.animation = 'slideOut 0.5s ease forwards';
     });
     
     // Update display after animation
     setTimeout(() => {
-      this.updateDisplayedMembers();
+      this.positionMembers();
     }, 500);
+    
+    // Update active dot
+    this.updateActiveDot();
   }
 
   updateActiveDot() {
@@ -278,6 +303,46 @@ class MembersCarousel {
     
     dots.forEach((dot, i) => {
       dot.classList.toggle('active', i === activeBatch);
+    });
+  }
+
+  startContinuousRotation() {
+    const rotate = () => {
+      if (this.isRotating && this.orbitElement) {
+        this.rotationAngle += this.rotationSpeed;
+        if (this.rotationAngle >= 360) {
+          this.rotationAngle = 0;
+        }
+        
+        // Update member positions
+        this.updateMemberPositions();
+      }
+      this.animationId = requestAnimationFrame(rotate);
+    };
+    
+    rotate();
+  }
+
+  updateMemberPositions() {
+    const profiles = this.orbitElement.querySelectorAll('.member-profile');
+    if (profiles.length === 0) return;
+    
+    const radius = 160;
+    const centerX = 200;
+    const centerY = 200;
+    const angleStep = (2 * Math.PI) / profiles.length;
+    
+    profiles.forEach((profile, index) => {
+      const angle = index * angleStep + this.rotationAngle * (Math.PI / 180);
+      const x = centerX + radius * Math.cos(angle) - 45;
+      const y = centerY + radius * Math.sin(angle) - 45;
+      
+      profile.style.left = `${x}px`;
+      profile.style.top = `${y}px`;
+      
+      // Scale based on position (front profiles are larger)
+      const scale = 0.9 + 0.2 * Math.abs(Math.cos(angle));
+      profile.style.transform = `scale(${scale})`;
     });
   }
 
@@ -291,10 +356,15 @@ class MembersCarousel {
   }
 
   stopRotation() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
+    this.isRotating = false;
+    if (this.interval) clearInterval(this.interval);
+    if (this.animationId) cancelAnimationFrame(this.animationId);
+  }
+
+  resumeRotation() {
+    this.isRotating = true;
+    this.startContinuousRotation();
+    this.startBatchRotation();
   }
 }
 
@@ -353,12 +423,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Refresh online count every 60 seconds
   setInterval(fetchOnlineCount, 60000);
+  
+  // Pause rotation on hover
+  const carouselContainer = document.querySelector('.online-members');
+  if (carouselContainer) {
+    carouselContainer.addEventListener('mouseenter', () => {
+      carousel.stopRotation();
+    });
+    
+    carouselContainer.addEventListener('mouseleave', () => {
+      carousel.resumeRotation();
+    });
+  }
 });
 
 // Refresh members periodically
 setInterval(async () => {
   if (carousel) {
     await carousel.loadMembers();
-    carousel.updateDisplayedMembers();
+    carousel.positionMembers();
   }
 }, 300000); // Every 5 minutes
