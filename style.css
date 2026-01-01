@@ -165,7 +165,7 @@ body.light .subtitle {
 }
 
 /* =========================
-   ONLINE MEMBERS CAROUSEL
+   ONLINE MEMBERS CAROUSEL - SIMPLIFIED VERSION
    ========================= */
 .online-members {
   height: 560px;
@@ -197,36 +197,20 @@ body.light .subtitle {
 
 .members-carousel {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 60px);
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
+  margin-top: 60px;
 }
 
-/* Carousel track for continuous animation */
-.carousel-track {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.member-orbit {
-  position: relative;
-  width: 400px;
-  height: 400px;
-  transform-style: preserve-3d;
-  animation: orbitRotate 40s linear infinite;
-  transform-origin: center;
-}
-
-/* Pause animation on hover */
-.online-members:hover .member-orbit {
-  animation-play-state: paused;
+/* Simple circular container */
+.circle-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  transform: translate(-50%, -50%);
 }
 
 .member-profile {
@@ -241,44 +225,31 @@ body.light .subtitle {
   align-items: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: all 0.5s ease;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  top: 50%;
-  left: 50%;
-  margin-left: -50px;
-  margin-top: -50px;
-  transform-origin: center;
+  top: 0;
+  left: 0;
+  transform-origin: 250px 250px; /* Center of the circle-container */
   opacity: 0;
   animation: fadeInProfile 0.8s ease forwards;
 }
 
-/* Position members around the circle with stagger delay */
-.member-profile:nth-child(1) { 
-  transform: rotate(0deg) translateX(200px) rotate(0deg);
-  animation-delay: 0.1s;
-}
-.member-profile:nth-child(2) { 
-  transform: rotate(60deg) translateX(200px) rotate(-60deg);
-  animation-delay: 0.2s;
-}
-.member-profile:nth-child(3) { 
-  transform: rotate(120deg) translateX(200px) rotate(-120deg);
-  animation-delay: 0.3s;
-}
-.member-profile:nth-child(4) { 
-  transform: rotate(180deg) translateX(200px) rotate(-180deg);
-  animation-delay: 0.4s;
-}
-.member-profile:nth-child(5) { 
-  transform: rotate(240deg) translateX(200px) rotate(-240deg);
-  animation-delay: 0.5s;
-}
-.member-profile:nth-child(6) { 
-  transform: rotate(300deg) translateX(200px) rotate(-300deg);
-  animation-delay: 0.6s;
+/* Position members around the circle (6 positions) */
+.member-profile:nth-child(1) { transform: rotate(0deg) translate(250px) rotate(0deg); animation-delay: 0.1s; }
+.member-profile:nth-child(2) { transform: rotate(60deg) translate(250px) rotate(-60deg); animation-delay: 0.2s; }
+.member-profile:nth-child(3) { transform: rotate(120deg) translate(250px) rotate(-120deg); animation-delay: 0.3s; }
+.member-profile:nth-child(4) { transform: rotate(180deg) translate(250px) rotate(-180deg); animation-delay: 0.4s; }
+.member-profile:nth-child(5) { transform: rotate(240deg) translate(250px) rotate(-240deg); animation-delay: 0.5s; }
+.member-profile:nth-child(6) { transform: rotate(300deg) translate(250px) rotate(-300deg); animation-delay: 0.6s; }
+
+/* Rotate the entire circle */
+.circle-container.rotating {
+  animation: rotateCircle 40s linear infinite;
 }
 
-/* Scale members based on position - front members are larger */
+/* Pause rotation on hover */
+.online-members:hover .circle-container.rotating {
+  animation-play-state: paused;
+}
+
 .member-profile.active {
   transform: scale(1.1) !important;
   box-shadow: 0 15px 40px rgba(88, 101, 242, 0.8);
@@ -364,6 +335,8 @@ body.light .subtitle {
   display: flex;
   gap: 15px;
   z-index: 10;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .carousel-dot {
@@ -384,6 +357,9 @@ body.light .subtitle {
 /* Loading animation */
 .loading-text {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: #b5b8cc;
   font-size: 1.2rem;
   animation: pulse 2s infinite;
@@ -800,9 +776,9 @@ body.light .rules li::before {
 }
 
 /* Carousel animations */
-@keyframes orbitRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes rotateCircle {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 @keyframes fadeInProfile {
@@ -868,24 +844,23 @@ body.light .rules li::before {
     height: 480px;
   }
   
-  .member-orbit {
-    width: 350px;
-    height: 350px;
+  .circle-container {
+    width: 400px;
+    height: 400px;
   }
   
   .member-profile {
     width: 90px;
     height: 90px;
-    margin-left: -45px;
-    margin-top: -45px;
+    transform-origin: 200px 200px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translateX(175px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translateX(175px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translateX(175px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translateX(175px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translateX(175px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translateX(175px) rotate(-300deg); }
+  .member-profile:nth-child(1) { transform: rotate(0deg) translate(200px) rotate(0deg); }
+  .member-profile:nth-child(2) { transform: rotate(60deg) translate(200px) rotate(-60deg); }
+  .member-profile:nth-child(3) { transform: rotate(120deg) translate(200px) rotate(-120deg); }
+  .member-profile:nth-child(4) { transform: rotate(180deg) translate(200px) rotate(-180deg); }
+  .member-profile:nth-child(5) { transform: rotate(240deg) translate(200px) rotate(-240deg); }
+  .member-profile:nth-child(6) { transform: rotate(300deg) translate(200px) rotate(-300deg); }
   
   .member-avatar {
     width: 70px;
@@ -976,24 +951,23 @@ body.light .rules li::before {
     height: 400px;
   }
   
-  .member-orbit {
-    width: 300px;
-    height: 300px;
+  .circle-container {
+    width: 320px;
+    height: 320px;
   }
   
   .member-profile {
     width: 80px;
     height: 80px;
-    margin-left: -40px;
-    margin-top: -40px;
+    transform-origin: 160px 160px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translateX(150px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translateX(150px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translateX(150px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translateX(150px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translateX(150px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translateX(150px) rotate(-300deg); }
+  .member-profile:nth-child(1) { transform: rotate(0deg) translate(160px) rotate(0deg); }
+  .member-profile:nth-child(2) { transform: rotate(60deg) translate(160px) rotate(-60deg); }
+  .member-profile:nth-child(3) { transform: rotate(120deg) translate(160px) rotate(-120deg); }
+  .member-profile:nth-child(4) { transform: rotate(180deg) translate(160px) rotate(-180deg); }
+  .member-profile:nth-child(5) { transform: rotate(240deg) translate(160px) rotate(-240deg); }
+  .member-profile:nth-child(6) { transform: rotate(300deg) translate(160px) rotate(-300deg); }
   
   .member-avatar {
     width: 60px;
@@ -1057,24 +1031,23 @@ body.light .rules li::before {
     height: 350px;
   }
   
-  .member-orbit {
-    width: 250px;
-    height: 250px;
+  .circle-container {
+    width: 260px;
+    height: 260px;
   }
   
   .member-profile {
     width: 70px;
     height: 70px;
-    margin-left: -35px;
-    margin-top: -35px;
+    transform-origin: 130px 130px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translateX(125px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translateX(125px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translateX(125px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translateX(125px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translateX(125px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translateX(125px) rotate(-300deg); }
+  .member-profile:nth-child(1) { transform: rotate(0deg) translate(130px) rotate(0deg); }
+  .member-profile:nth-child(2) { transform: rotate(60deg) translate(130px) rotate(-60deg); }
+  .member-profile:nth-child(3) { transform: rotate(120deg) translate(130px) rotate(-120deg); }
+  .member-profile:nth-child(4) { transform: rotate(180deg) translate(130px) rotate(-180deg); }
+  .member-profile:nth-child(5) { transform: rotate(240deg) translate(130px) rotate(-240deg); }
+  .member-profile:nth-child(6) { transform: rotate(300deg) translate(130px) rotate(-300deg); }
   
   .member-avatar {
     width: 50px;
