@@ -3,15 +3,20 @@
 // =======================
 const toggle = document.getElementById("themeToggle");
 
-// Auto theme from system
-if (!localStorage.theme) {
-  if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+// Initialize theme based on system or localStorage
+const initTheme = () => {
+  if (localStorage.theme === "light") {
     document.body.classList.add("light");
+  } else if (!localStorage.theme && window.matchMedia("(prefers-color-scheme: light)").matches) {
+    document.body.classList.add("light");
+  } else {
+    document.body.classList.remove("light");
   }
-} else if (localStorage.theme === "light") {
-  document.body.classList.add("light");
-}
+};
 
+initTheme();
+
+// Toggle button click
 toggle.addEventListener("click", () => {
   document.body.classList.toggle("light");
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
@@ -36,7 +41,6 @@ function animateNumberPlus(element, target = 100, duration = 1500) {
   requestAnimationFrame(update);
 }
 
-// Animate members on load
 const membersEl = document.getElementById("members");
 if (membersEl) animateNumberPlus(membersEl);
 
@@ -78,20 +82,17 @@ async function fetchOnlineCount() {
     if (!res.ok) throw new Error("Discord widget fetch failed");
 
     const data = await res.json();
-
     const onlineEl = document.getElementById("online");
     if (!onlineEl) return;
 
-    // Smooth animation of online count
     const current = parseInt(onlineEl.textContent) || 0;
     const target = data.presence_count;
 
     let startTime = null;
-
     function animate(now) {
       if (!startTime) startTime = now;
       const elapsed = now - startTime;
-      const duration = 800; // animation duration
+      const duration = 800;
       const progress = Math.min(elapsed / duration, 1);
       const value = Math.floor(current + (target - current) * progress);
       onlineEl.textContent = value;
