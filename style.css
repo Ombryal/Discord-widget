@@ -619,3 +619,29 @@ body.light .rules li::before {
   transform: scale(0.97);
   box-shadow: 0 6px 16px rgba(88,101,242,0.4);
 }
+
+/* ==============================
+   LIGHT MODE ADJUSTMENTS
+   ============================== */
+body.light {
+  background: #f5f5f5;
+  color: #111;
+}
+
+body.light .card,
+body.light .features,
+body.light .rules,
+body.light #moderators {
+  background: rgba(255,255,255,0.95);
+  color: #111;
+}
+
+body.light .subtitle { color: #555; }
+body.light .stat { background: rgba(0,0,0,0.05); color: #111; }
+body.light .mod-name { color: #111; }
+body.light .mod-handle { color: #555; }
+body.light .join,
+body.light .interactive-btn { background: #5865f2; color: #fff; }
+
+body.light .rules li { color: #222; }
+body.light .rules li::before { background: linear-gradient(135deg, #3a46ff, #7a3cff); }
