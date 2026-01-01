@@ -111,3 +111,65 @@ fetchOnlineCount();
 
 // Refresh every 60 seconds
 setInterval(fetchOnlineCount, 60000);
+
+// =======================
+// LIVE MEMBER ROTATION
+// =======================
+const MEMBER_BATCH_SIZE = 6;
+let memberIndex = 0;
+let membersCache = [];
+
+const memberListEl = document.getElementById("memberList");
+
+async function fetchMembers() {
+  try {
+    const res = await fetch(WIDGET_URL);
+    if (!res.ok) throw new Error("Widget fetch failed");
+    const data = await res.json();
+
+    membersCache = data.members || [];
+    renderMemberBatch();
+  } catch (err) {
+    console.error("Member fetch error:", err);
+  }
+}
+
+function renderMemberBatch() {
+  if (!memberListEl || membersCache.length === 0) return;
+
+  memberListEl.innerHTML = "";
+
+  const batch = membersCache.slice(
+    memberIndex,
+    memberIndex + MEMBER_BATCH_SIZE
+  );
+
+  batch.forEach(member => {
+    const card = document.createElement("div");
+    card.className = "member-card";
+
+    const avatar = document.createElement("img");
+    avatar.className = "member-avatar";
+    avatar.src = member.avatar_url;
+    avatar.alt = member.username;
+
+    const name = document.createElement("div");
+    name.className = "member-name";
+    name.textContent = member.username;
+
+    card.appendChild(avatar);
+    card.appendChild(name);
+    memberListEl.appendChild(card);
+  });
+
+  memberIndex += MEMBER_BATCH_SIZE;
+  if (memberIndex >= membersCache.length) {
+    memberIndex = 0;
+  }
+}
+
+// rotate every 5 seconds
+setInterval(renderMemberBatch, 5000);
+
+// initial load
+fetchMembers();
