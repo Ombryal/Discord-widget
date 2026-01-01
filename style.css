@@ -180,7 +180,6 @@ body.light .subtitle {
   align-items: center;
   box-shadow: 0 0 40px rgba(88, 101, 242, 0.4);
   border: 1px solid rgba(88, 101, 242, 0.3);
-  perspective: 1000px;
 }
 
 .carousel-title {
@@ -204,7 +203,6 @@ body.light .subtitle {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  perspective: 1000px;
 }
 
 /* Carousel track for continuous animation */
@@ -218,12 +216,17 @@ body.light .subtitle {
 }
 
 .member-orbit {
-  position: absolute;
+  position: relative;
   width: 400px;
   height: 400px;
-  border-radius: 50%;
   transform-style: preserve-3d;
-  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: orbitRotate 40s linear infinite;
+  transform-origin: center;
+}
+
+/* Pause animation on hover */
+.online-members:hover .member-orbit {
+  animation-play-state: paused;
 }
 
 .member-profile {
@@ -240,34 +243,46 @@ body.light .subtitle {
   transition: all 0.5s ease;
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  left: 50%;
   top: 50%;
+  left: 50%;
   margin-left: -50px;
   margin-top: -50px;
   transform-origin: center;
+  opacity: 0;
+  animation: fadeInProfile 0.8s ease forwards;
 }
 
-/* Position members around the circle */
-.member-profile:nth-child(1) { transform: rotate(0deg) translateX(200px) rotate(0deg); }
-.member-profile:nth-child(2) { transform: rotate(60deg) translateX(200px) rotate(-60deg); }
-.member-profile:nth-child(3) { transform: rotate(120deg) translateX(200px) rotate(-120deg); }
-.member-profile:nth-child(4) { transform: rotate(180deg) translateX(200px) rotate(-180deg); }
-.member-profile:nth-child(5) { transform: rotate(240deg) translateX(200px) rotate(-240deg); }
-.member-profile:nth-child(6) { transform: rotate(300deg) translateX(200px) rotate(-300deg); }
+/* Position members around the circle with stagger delay */
+.member-profile:nth-child(1) { 
+  transform: rotate(0deg) translateX(200px) rotate(0deg);
+  animation-delay: 0.1s;
+}
+.member-profile:nth-child(2) { 
+  transform: rotate(60deg) translateX(200px) rotate(-60deg);
+  animation-delay: 0.2s;
+}
+.member-profile:nth-child(3) { 
+  transform: rotate(120deg) translateX(200px) rotate(-120deg);
+  animation-delay: 0.3s;
+}
+.member-profile:nth-child(4) { 
+  transform: rotate(180deg) translateX(200px) rotate(-180deg);
+  animation-delay: 0.4s;
+}
+.member-profile:nth-child(5) { 
+  transform: rotate(240deg) translateX(200px) rotate(-240deg);
+  animation-delay: 0.5s;
+}
+.member-profile:nth-child(6) { 
+  transform: rotate(300deg) translateX(200px) rotate(-300deg);
+  animation-delay: 0.6s;
+}
 
-/* Active state for front members */
+/* Scale members based on position - front members are larger */
 .member-profile.active {
-  z-index: 2;
   transform: scale(1.1) !important;
   box-shadow: 0 15px 40px rgba(88, 101, 242, 0.8);
-}
-
-.member-profile.entering {
-  animation: slideIn 0.8s ease forwards;
-}
-
-.member-profile.exiting {
-  animation: slideOut 0.8s ease forwards;
+  z-index: 2;
 }
 
 .member-avatar {
@@ -304,6 +319,7 @@ body.light .subtitle {
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 3;
+  min-width: max-content;
 }
 
 .member-profile:hover .member-name {
@@ -363,11 +379,6 @@ body.light .subtitle {
   background: #5865f2;
   transform: scale(1.2);
   box-shadow: 0 0 10px rgba(88, 101, 242, 0.8);
-}
-
-/* Animation for member change */
-.member-profile.changing {
-  animation: memberChange 1s ease forwards;
 }
 
 /* Loading animation */
@@ -794,14 +805,14 @@ body.light .rules li::before {
   100% { transform: rotate(360deg); }
 }
 
-@keyframes slideIn {
+@keyframes fadeInProfile {
   0% {
     opacity: 0;
-    transform: scale(0.8) translateY(20px);
+    transform: scale(0.8);
   }
   100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
   }
 }
 
@@ -812,29 +823,8 @@ body.light .rules li::before {
   }
   100% {
     opacity: 0;
-    transform: scale(0.8) translateY(-20px);
+    transform: scale(0.8);
   }
-}
-
-@keyframes memberChange {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Continuous rotation animation */
-@keyframes continuousRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* =========================
