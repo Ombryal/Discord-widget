@@ -1,4 +1,6 @@
+// =======================
 // THEME TOGGLE
+// =======================
 const toggle = document.getElementById("themeToggle");
 
 // Auto theme from system
@@ -15,7 +17,9 @@ toggle.addEventListener("click", () => {
   localStorage.theme = document.body.classList.contains("light") ? "light" : "dark";
 });
 
-// STAT ANIMATION
+// =======================
+// MEMBERS NUMBER ANIMATION
+// =======================
 function animateNumberPlus(element, target = 100, duration = 1500) {
   const start = 0;
   const range = target - start;
@@ -32,16 +36,13 @@ function animateNumberPlus(element, target = 100, duration = 1500) {
   requestAnimationFrame(update);
 }
 
-function fetchStats() {
-  const membersEl = document.getElementById("members");
-  const onlineEl = document.getElementById("online");
-  animateNumberPlus(membersEl);
-  animateNumberPlus(onlineEl);
-}
+// Animate members on load
+const membersEl = document.getElementById("members");
+if (membersEl) animateNumberPlus(membersEl);
 
-fetchStats();
-
-// SCROLL-TRIGGERED FADE IN
+// =======================
+// SCROLL TRIGGERED FADE-IN
+// =======================
 const scrollElements = document.querySelectorAll(".card, .rules, #moderators, .features");
 
 const elementInView = (el, offset = 0) => {
@@ -66,7 +67,7 @@ window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
 // =======================
-// DISCORD ONLINE COUNT ONLY
+// DISCORD ONLINE COUNT
 // =======================
 const GUILD_ID = "1433645535583277129";
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
@@ -74,15 +75,30 @@ const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
 async function fetchOnlineCount() {
   try {
     const res = await fetch(WIDGET_URL);
-    if (!res.ok) throw new Error("Widget fetch failed");
+    if (!res.ok) throw new Error("Discord widget fetch failed");
 
     const data = await res.json();
 
     const onlineEl = document.getElementById("online");
     if (!onlineEl) return;
 
-    // Optional: smooth number change
-    onlineEl.textContent = data.presence_count;
+    // Smooth animation of online count
+    const current = parseInt(onlineEl.textContent) || 0;
+    const target = data.presence_count;
+
+    let startTime = null;
+
+    function animate(now) {
+      if (!startTime) startTime = now;
+      const elapsed = now - startTime;
+      const duration = 800; // animation duration
+      const progress = Math.min(elapsed / duration, 1);
+      const value = Math.floor(current + (target - current) * progress);
+      onlineEl.textContent = value;
+      if (progress < 1) requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
 
   } catch (err) {
     console.error("Discord API error:", err);
