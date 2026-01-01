@@ -5,7 +5,7 @@
 
 html, body {
   height: 100%;
-  overscroll-behavior: contain;
+  overscroll-behavior: none; /* Changed from contain to fix scroll issues */
   scroll-behavior: smooth;
 }
 
@@ -44,6 +44,9 @@ body::before {
 
 body.light::before {
   opacity: 0.02;
+  background: 
+    linear-gradient(120deg, #f0f2ff, #e6e9ff, #f0f2ff),
+    url('https://www.transparenttextures.com/patterns/asfalt-light.png');
 }
 
 @keyframes gradientMove {
@@ -65,9 +68,10 @@ body.light::before {
   cursor: pointer;
   background: rgba(255, 255, 255, 0.1);
   color: inherit;
-  z-index: 10;
+  z-index: 100;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(10px);
 }
 
 #themeToggle:hover {
@@ -77,6 +81,15 @@ body.light::before {
 
 #themeToggle:active {
   transform: scale(0.95);
+}
+
+body.light #themeToggle {
+  background: rgba(0, 0, 0, 0.1);
+  color: #111;
+}
+
+body.light #themeToggle:hover {
+  background: rgba(0, 0, 0, 0.15);
 }
 
 /* =========================
@@ -115,12 +128,18 @@ body.light::before {
 
 body.light .card {
   background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
 }
 
 /* LEFT SIDE */
 .left h1 {
   font-size: clamp(2rem, 4vw, 2.8rem);
   margin-bottom: 10px;
+  color: #fff;
+}
+
+body.light .left h1 {
+  color: #111;
 }
 
 .subtitle {
@@ -133,12 +152,13 @@ body.light .subtitle {
 }
 
 /* =========================
-   STATS
+   STATS - FIXED FOR MOBILE SCROLL
    ========================= */
 .stats {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  min-height: 100px; /* Prevent collapse on scroll */
 }
 
 .stat {
@@ -149,6 +169,12 @@ body.light .subtitle {
   padding: 20px;
   text-align: center;
   animation: float 3s ease-in-out infinite;
+  opacity: 1 !important; /* Force visibility */
+  transform: none !important; /* Prevent scroll animation from hiding */
+}
+
+body.light .stat {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .stat:nth-child(2) { animation-delay: .2s; }
@@ -157,20 +183,30 @@ body.light .subtitle {
 .stat .num {
   font-size: 1.8rem;
   font-weight: 600;
+  color: #fff;
+}
+
+body.light .stat .num {
+  color: #111;
 }
 
 .stat .label {
   font-size: .85rem;
   opacity: .7;
+  color: #b5b8cc;
+}
+
+body.light .stat .label {
+  color: #555;
 }
 
 /* =========================
-   ONLINE MEMBERS CAROUSEL - SIMPLE VERSION
+   ONLINE MEMBERS CAROUSEL - FIXED FOR MOBILE
    ========================= */
 .online-members {
   height: 560px;
   border-radius: 18px;
-  overflow: hidden;
+  overflow: visible !important; /* Changed from hidden to prevent cutting */
   margin-bottom: 20px;
   background: rgba(15, 16, 25, 0.9);
   position: relative;
@@ -180,6 +216,12 @@ body.light .subtitle {
   align-items: center;
   box-shadow: 0 0 40px rgba(88, 101, 242, 0.4);
   border: 1px solid rgba(88, 101, 242, 0.3);
+}
+
+body.light .online-members {
+  background: rgba(240, 242, 255, 0.9);
+  border: 1px solid rgba(88, 101, 242, 0.2);
+  box-shadow: 0 0 40px rgba(88, 101, 242, 0.2);
 }
 
 .carousel-title {
@@ -195,22 +237,29 @@ body.light .subtitle {
   padding: 10px;
 }
 
+body.light .carousel-title {
+  text-shadow: 0 0 5px rgba(88, 101, 242, 0.4);
+}
+
 .members-carousel {
   width: 100%;
   height: calc(100% - 60px);
   position: relative;
-  overflow: hidden;
   margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Circular orbit container */
+/* Circular orbit container - FIXED FOR MOBILE */
 .orbit-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  height: 400px;
-  transform: translate(-50%, -50%);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Member profile - positioned by JavaScript */
@@ -229,6 +278,10 @@ body.light .subtitle {
   opacity: 0;
   animation: fadeInProfile 0.8s ease forwards;
   z-index: 1;
+}
+
+body.light .member-profile {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .member-profile.active {
@@ -250,6 +303,12 @@ body.light .subtitle {
   font-weight: bold;
   font-size: 1.5rem;
   color: white;
+}
+
+body.light .member-avatar {
+  background: #e6e9ff;
+  border: 3px solid rgba(88, 101, 242, 0.2);
+  color: #5865f2;
 }
 
 .member-avatar img {
@@ -274,6 +333,11 @@ body.light .subtitle {
   min-width: max-content;
 }
 
+body.light .member-name {
+  color: #111;
+  background: rgba(255, 255, 255, 0.9);
+}
+
 .member-profile:hover .member-name {
   opacity: 1;
 }
@@ -287,6 +351,10 @@ body.light .subtitle {
   border-radius: 50%;
   border: 2px solid #1e212e;
   z-index: 2;
+}
+
+body.light .member-status {
+  border: 2px solid #e6e9ff;
 }
 
 .status-online {
@@ -329,6 +397,10 @@ body.light .subtitle {
   transition: all 0.3s ease;
 }
 
+body.light .carousel-dot {
+  background: rgba(0, 0, 0, 0.3);
+}
+
 .carousel-dot.active {
   background: #5865f2;
   transform: scale(1.2);
@@ -345,6 +417,10 @@ body.light .subtitle {
   font-size: 1.2rem;
   animation: pulse 2s infinite;
   z-index: 1;
+}
+
+body.light .loading-text {
+  color: #888;
 }
 
 /* =========================
@@ -429,9 +505,20 @@ body.light .subtitle {
   backface-visibility: hidden;
 }
 
+body.light .features {
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
 .features h2 {
   font-size: 2rem;
   margin-bottom: 20px;
+  color: #fff;
+}
+
+body.light .features h2 {
+  color: #111;
 }
 
 .features ul {
@@ -446,17 +533,12 @@ body.light .subtitle {
   color: #ccc;
 }
 
-body.light .features {
-  background: rgba(255, 255, 255, 0.85);
-  color: #111;
-}
-
 body.light .features li {
   color: #333;
 }
 
 /* =========================
-   MODERATOR SECTION
+   MODERATOR SECTION - FIXED FOR MOBILE SCROLL
    ========================= */
 #moderators {
   max-width: 900px;
@@ -471,16 +553,16 @@ body.light .features li {
   display: flex;
   flex-direction: column;
   gap: 30px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
+  opacity: 1 !important; /* Force visibility */
+  transform: translateY(0) !important; /* Prevent scroll animation from hiding */
+  will-change: auto;
+  min-height: 500px; /* Prevent collapse */
 }
 
 body.light #moderators {
   background: rgba(255, 255, 255, 0.85);
   color: #111;
+  box-shadow: 0 0 35px rgba(88, 101, 242, 0.3), 0 15px 50px rgba(0, 0, 0, 0.2);
 }
 
 /* Section Heading */
@@ -489,6 +571,10 @@ body.light #moderators {
   text-align: center;
   color: #5865f2;
   text-shadow: 0 0 8px rgba(88, 101, 242, 0.8);
+}
+
+body.light #moderators h2 {
+  text-shadow: 0 0 5px rgba(88, 101, 242, 0.4);
 }
 
 /* Inner Cards Container */
@@ -505,6 +591,7 @@ body.light #moderators {
 body.light .moderator-inner-card {
   background: rgba(255, 255, 255, 0.9);
   color: #111;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
 }
 
 /* Admins & Mods Headings */
@@ -519,12 +606,14 @@ body.light #moderators h3 {
   color: #111;
 }
 
-/* Grid for admin/mod cards */
+/* Grid for admin/mod cards - FIXED FOR MOBILE */
 .moderator-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 16px;
   justify-items: center;
+  opacity: 1 !important; /* Force visibility */
+  transform: none !important; /* Prevent scroll animation from hiding */
 }
 
 /* Admin Card */
@@ -543,6 +632,12 @@ body.light #moderators h3 {
   animation: pulse 3s infinite;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+  opacity: 1 !important; /* Force visibility */
+  transform: none !important; /* Prevent scroll animation from hiding */
+}
+
+body.light .admin-card {
+  box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
 }
 
 .admin-card:hover {
@@ -550,7 +645,7 @@ body.light #moderators h3 {
   box-shadow: 0 0 30px rgba(88, 101, 242, 0.9), 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
-/* Mods Card - RESTORED TO ORIGINAL SIZE */
+/* Mods Card */
 .mod-card-secondary {
   width: 120px;
   height: 120px;
@@ -566,6 +661,13 @@ body.light #moderators h3 {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   padding: 8px;
+  opacity: 1 !important; /* Force visibility */
+  transform: none !important; /* Prevent scroll animation from hiding */
+}
+
+body.light .mod-card-secondary {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .mod-card-secondary:hover {
@@ -573,7 +675,7 @@ body.light #moderators h3 {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Name & handle - UPDATED FOR BETTER TEXT FITTING */
+/* Name & handle */
 .mod-name {
   font-weight: 600;
   font-size: 0.9rem;
@@ -584,6 +686,10 @@ body.light #moderators h3 {
   overflow-wrap: break-word;
   max-width: 100%;
   padding: 0 4px;
+}
+
+body.light .mod-name {
+  color: #111;
 }
 
 .mod-handle {
@@ -597,13 +703,8 @@ body.light #moderators h3 {
   padding: 0 4px;
 }
 
-/* Light theme */
-body.light .mod-name {
-  color: #111;
-}
-
 body.light .mod-handle {
-  color: #555;
+  color: #666;
 }
 
 /* =========================
@@ -630,6 +731,7 @@ body.light .rules {
   background: rgba(255, 255, 255, 0.85);
   color: #111;
   border: 1px solid rgba(88, 101, 242, 0.4);
+  box-shadow: 0 0 40px rgba(88, 101, 242, 0.3), 0 15px 60px rgba(0, 0, 0, 0.2);
 }
 
 .rules h2 {
@@ -639,6 +741,10 @@ body.light .rules {
   letter-spacing: 1px;
   color: #5865f2;
   text-shadow: 0 0 12px rgba(88, 101, 242, 0.9);
+}
+
+body.light .rules h2 {
+  text-shadow: 0 0 8px rgba(88, 101, 242, 0.6);
 }
 
 /* Rules list */
@@ -662,6 +768,10 @@ body.light .rules {
   transform: translateY(20px);
   animation: ruleReveal 0.8s ease forwards;
   transition: transform 0.2s ease, color 0.2s ease;
+}
+
+body.light .rules li {
+  color: #222;
 }
 
 /* Stagger reveal for all 10 rules */
@@ -698,6 +808,11 @@ body.light .rules {
   transition: all 0.3s ease;
 }
 
+body.light .rules li::before {
+  background: linear-gradient(135deg, #4a56e2, #7a3cff);
+  box-shadow: 0 0 14px rgba(74, 86, 226, 0.4), inset 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
 /* Hover effects */
 .rules li:hover::before {
   background: linear-gradient(135deg, #ff4d4d, #ff006a);
@@ -705,27 +820,26 @@ body.light .rules {
   transform: scale(1.1) rotate(-3deg);
 }
 
+body.light .rules li:hover::before {
+  box-shadow: 0 0 20px rgba(255, 77, 77, 0.7), inset 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
 .rules li:hover {
   color: #fff;
   transform: translateX(8px);
 }
 
-/* Light mode rules */
-body.light .rules li {
-  color: #222;
-}
-
-body.light .rules li::before {
-  background: linear-gradient(135deg, #4a56e2, #6a3cff);
+body.light .rules li:hover {
+  color: #000;
 }
 
 /* =========================
    ANIMATIONS
    ========================= */
 @keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
 }
 
 @keyframes pulse {
@@ -779,12 +893,6 @@ body.light .rules li::before {
   }
 }
 
-/* Continuous rotation animation */
-@keyframes rotateOrbit {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 /* =========================
    TOUCH FEEDBACK
    ========================= */
@@ -812,7 +920,7 @@ body.light .rules li::before {
 }
 
 /* =========================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - FIXED FOR MOBILE
    ========================= */
 
 /* Tablet (900px) */
@@ -824,11 +932,11 @@ body.light .rules li::before {
   
   .online-members {
     height: 480px;
+    overflow: visible !important;
   }
   
   .orbit-container {
-    width: 350px;
-    height: 350px;
+    min-height: 350px;
   }
   
   .member-profile {
@@ -841,17 +949,13 @@ body.light .rules li::before {
     height: 60px;
   }
   
-  .moderator-grid.admins {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .moderator-grid.mods {
+  .moderator-grid {
     grid-template-columns: repeat(2, 1fr);
   }
   
   .admin-card {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
   }
   
   .mod-card-secondary {
@@ -888,6 +992,7 @@ body.light .rules li::before {
   .wrapper {
     padding-left: 12px;
     padding-right: 12px;
+    gap: 30px;
   }
   
   .card,
@@ -901,12 +1006,13 @@ body.light .rules li::before {
     border-radius: 20px;
   }
   
-  /* Stats grid fix */
+  /* Stats grid fix - FIXED */
   .stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
     justify-items: center;
+    min-height: auto;
   }
   
   .stats .stat:nth-child(1),
@@ -918,16 +1024,20 @@ body.light .rules li::before {
     grid-column: 1 / -1;
     justify-self: center;
     max-width: 200px;
+    width: 100%;
   }
   
-  /* Online members carousel mobile */
+  /* Online members carousel mobile - FIXED */
   .online-members {
     height: 400px;
+    overflow: visible !important;
   }
   
   .orbit-container {
-    width: 300px;
-    height: 300px;
+    min-height: 300px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
   }
   
   .member-profile {
@@ -945,11 +1055,12 @@ body.light .rules li::before {
     bottom: -20px;
   }
   
-  /* Moderator grid */
+  /* Moderator grid - FIXED */
   .moderator-grid {
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
     align-items: center;
+    gap: 12px;
   }
   
   .admin-card {
@@ -982,7 +1093,7 @@ body.light .rules li::before {
   .wrapper {
     padding-left: 8px;
     padding-right: 8px;
-    gap: 30px;
+    gap: 25px;
   }
   
   .card,
@@ -995,11 +1106,12 @@ body.light .rules li::before {
   
   .online-members {
     height: 350px;
+    overflow: visible !important;
   }
   
   .orbit-container {
-    width: 250px;
-    height: 250px;
+    min-height: 250px;
+    max-width: 250px;
   }
   
   .member-profile {
@@ -1016,6 +1128,7 @@ body.light .rules li::before {
   .member-name {
     font-size: 0.6rem;
     bottom: -18px;
+    padding: 3px 8px;
   }
   
   .carousel-title {
@@ -1044,5 +1157,18 @@ body.light .rules li::before {
   #moderators h2,
   .features h2 {
     font-size: 1.8rem;
+  }
+  
+  .stats .stat {
+    min-width: 100px;
+    padding: 15px;
+  }
+  
+  .stats .stat .num {
+    font-size: 1.5rem;
+  }
+  
+  .stats .stat .label {
+    font-size: 0.75rem;
   }
 }
