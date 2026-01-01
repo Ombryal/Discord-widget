@@ -710,3 +710,106 @@ body.light .member-card {
 body.light .member-list::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.25);
 }
+
+/* =========================
+   LIVE MEMBERS ORBIT
+========================= */
+
+.live-members {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 1.5rem auto;
+}
+
+@media (max-width: 600px) {
+  .live-members {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.live-members h3 {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+/* Orbit container */
+.member-list {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: orbitRotate 25s linear infinite;
+}
+
+/* Member pill */
+.member {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background: rgba(20,22,34,0.9);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body.light .member {
+  background: rgba(255,255,255,0.95);
+  color: #111;
+}
+
+/* Avatar wrapper */
+.member-avatar {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+/* Avatar image */
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Status dot */
+.status-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid #111;
+}
+
+/* Status colors */
+.status-online { background: #23a55a; }
+.status-idle { background: #f0b232; }
+.status-dnd { background: #f23f43; }
+.status-offline { background: #80848e; }
+
+body.light .status-dot {
+  border-color: #fff;
+}
+
+/* Orbit animation */
+@keyframes orbitRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
