@@ -72,26 +72,11 @@ window.addEventListener("load", handleScrollAnimation);
 const GUILD_ID = "1433645535583277129";
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
 
-// Mock data for online members (in production, you'd get this from Discord API)
-const mockMembers = [
-  { id: 1, name: "Alex", avatar: "A", status: "online" },
-  { id: 2, name: "Sam", avatar: "S", status: "idle" },
-  { id: 3, name: "Jordan", avatar: "J", status: "dnd" },
-  { id: 4, name: "Taylor", avatar: "T", status: "online" },
-  { id: 5, name: "Casey", avatar: "C", status: "online" },
-  { id: 6, name: "Riley", avatar: "R", status: "idle" },
-  { id: 7, name: "Morgan", avatar: "M", status: "online" },
-  { id: 8, name: "Drew", avatar: "D", status: "online" },
-  { id: 9, name: "Blake", avatar: "B", status: "dnd" },
-  { id: 10, name: "Cameron", avatar: "C", status: "online" },
-  { id: 11, name: "Jamie", avatar: "J", status: "idle" },
-  { id: 12, name: "Quinn", avatar: "Q", status: "online" }
-];
-
 // Color palette for avatar backgrounds
 const avatarColors = [
   "#5865f2", "#3ba55d", "#faa81a", "#ed4245", 
-  "#9b4dff", "#ff73fa", "#00b0f4", "#ff9900"
+  "#9b4dff", "#ff73fa", "#00b0f4", "#ff9900",
+  "#1abc9c", "#e74c3c", "#3498db", "#f1c40f"
 ];
 
 class MembersCarousel {
@@ -99,40 +84,137 @@ class MembersCarousel {
     this.container = document.getElementById('membersCarousel');
     this.controls = document.getElementById('carouselControls');
     this.members = [];
-    this.currentBatch = 0;
-    this.batchSize = 6;
-    this.totalBatches = 0;
+    this.currentIndex = 0;
+    this.displayCount = 6;
+    this.orbitElement = null;
     this.interval = null;
-    this.rotationInterval = 8000; // 8 seconds per batch
+    this.rotationInterval = 5000; // 5 seconds per rotation
+    this.isRotating = true;
+    this.rotationSpeed = 0.3; // degrees per frame
+    this.currentAngle = 0;
+    this.animationId = null;
   }
 
-  init() {
-    this.loadMembers();
+  async init() {
+    await this.loadMembers();
     this.setupCarousel();
-    this.startRotation();
+    this.startContinuousRotation();
+    this.startBatchRotation();
   }
 
-  loadMembers() {
-    // In production, fetch from Discord API
-    // For now, use mock data
-    this.members = [...mockMembers];
-    this.totalBatches = Math.ceil(this.members.length / this.batchSize);
+  async loadMembers() {
+    try {
+      const response = await fetch(WIDGET_URL);
+      const data = await response.json();
+      
+      // Get online members from Discord API
+      if (data.members) {
+        // Filter for online members and map to our format
+        this.members = data.members
+          .filter(member => member.status !== 'offline' && !member.bot)
+          .map((member, index) => ({
+            id: member.id || index,
+            name: member.username || `User${index}`,
+            avatar: member.avatar_url || null,
+            discriminator: member.discriminator || '0000',
+            status: member.status || 'online',
+            avatarLetter: member.username ? member.username.charAt(0).toUpperCase() : 'U'
+          }));
+        
+        // If we have less than displayCount members, add some offline ones
+        if (this.members.length < this.displayCount) {
+          const offlineMembers = data.members
+            .filter(member => member.status === 'offline' && !member.bot)
+            .slice(0, this.displayCount - this.members.length)
+            .map((member, index) => ({
+              id: member.id || `offline-${index}`,
+              name: member.username || `User${index}`,
+              avatar: member.avatar_url || null,
+              discriminator: member.discriminator || '0000',
+              status: 'offline',
+              avatarLetter: member.username ? member.username.charAt(0).toUpperCase() : 'U'
+            }));
+          
+          this.members = [...this.members, ...offlineMembers];
+        }
+        
+        // Update online count
+        const onlineCount = data.members.filter(m => m.status !== 'offline' && !m.bot).length;
+        this.updateOnlineCount(onlineCount);
+      }
+      
+      // If still empty, use fallback data
+      if (this.members.length === 0) {
+        this.members = this.getFallbackMembers();
+      }
+      
+    } catch (error) {
+      console.error('Error loading Discord members:', error);
+      this.members = this.getFallbackMembers();
+    }
+  }
+
+  getFallbackMembers() {
+    return [
+      { id: 1, name: "MidnightCane", avatar: null, discriminator: "0001", status: "online", avatarLetter: "M" },
+      { id: 2, name: "Akiyama", avatar: null, discriminator: "0002", status: "idle", avatarLetter: "A" },
+      { id: 3, name: "Tekking$$", avatar: null, discriminator: "0003", status: "dnd", avatarLetter: "T" },
+      { id: 4, name: "LightSpeed", avatar: null, discriminator: "0004", status: "online", avatarLetter: "L" },
+      { id: 5, name: "Albert", avatar: null, discriminator: "0005", status: "online", avatarLetter: "A" },
+      { id: 6, name: "THE ONE", avatar: null, discriminator: "0006", status: "idle", avatarLetter: "T" },
+      { id: 7, name: "zero_x", avatar: null, discriminator: "0007", status: "online", avatarLetter: "Z" },
+      { id: 8, name: "VenomSong", avatar: null, discriminator: "0008", status: "dnd", avatarLetter: "V" },
+      { id: 9, name: "MaiHunnids", avatar: null, discriminator: "0009", status: "online", avatarLetter: "M" },
+      { id: 10, name: "Uncanny", avatar: null, discriminator: "0010", status: "idle", avatarLetter: "U" },
+      { id: 11, name: "LostLight", avatar: null, discriminator: "0011", status: "online", avatarLetter: "L" },
+      { id: 12, name: "Machina", avatar: null, discriminator: "0012", status: "offline", avatarLetter: "M" }
+    ];
+  }
+
+  updateOnlineCount(count) {
+    const onlineEl = document.getElementById('online');
+    if (onlineEl) {
+      // Smooth animation
+      const current = parseInt(onlineEl.textContent) || 0;
+      const target = count;
+      
+      let startTime = null;
+      const duration = 1000;
+
+      function animate(now) {
+        if (!startTime) startTime = now;
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const value = Math.floor(current + (target - current) * progress);
+        onlineEl.textContent = value;
+        if (progress < 1) requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    }
   }
 
   setupCarousel() {
     // Clear loading text
     this.container.innerHTML = '';
     
-    // Create controls
-    this.createControls();
+    // Create orbit container
+    this.orbitElement = document.createElement('div');
+    this.orbitElement.className = 'member-orbit';
+    this.container.appendChild(this.orbitElement);
     
-    // Show first batch
-    this.showBatch(0);
+    // Create member profiles
+    this.updateDisplayedMembers();
+    
+    // Create controls if we have multiple batches
+    this.createControls();
   }
 
   createControls() {
     this.controls.innerHTML = '';
-    for (let i = 0; i < this.totalBatches; i++) {
+    const totalBatches = Math.ceil(this.members.length / this.displayCount);
+    
+    for (let i = 0; i < totalBatches; i++) {
       const dot = document.createElement('div');
       dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
       dot.addEventListener('click', () => this.showBatch(i));
@@ -140,58 +222,57 @@ class MembersCarousel {
     }
   }
 
-  showBatch(batchIndex) {
-    this.currentBatch = batchIndex;
+  updateDisplayedMembers() {
+    if (!this.orbitElement) return;
     
-    // Update active dot
-    const dots = this.controls.querySelectorAll('.carousel-dot');
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === batchIndex);
-    });
+    // Clear existing members
+    this.orbitElement.innerHTML = '';
     
-    // Clear container
-    this.container.innerHTML = '';
+    // Get current batch of members
+    const startIndex = this.currentIndex * this.displayCount;
+    const displayedMembers = this.members.slice(startIndex, startIndex + this.displayCount);
     
-    // Calculate batch members
-    const start = batchIndex * this.batchSize;
-    const end = start + this.batchSize;
-    const batchMembers = this.members.slice(start, end);
+    // If we don't have enough members, loop from beginning
+    if (displayedMembers.length < this.displayCount) {
+      const needed = this.displayCount - displayedMembers.length;
+      const extraMembers = this.members.slice(0, needed);
+      displayedMembers.push(...extraMembers);
+    }
     
-    // Position profiles in a circular pattern
-    const radius = Math.min(this.container.offsetWidth, this.container.offsetHeight) * 0.35;
-    const centerX = this.container.offsetWidth / 2;
-    const centerY = this.container.offsetHeight / 2;
-    const angleStep = (2 * Math.PI) / batchMembers.length;
-    
-    batchMembers.forEach((member, index) => {
-      const angle = index * angleStep;
-      const x = centerX + radius * Math.cos(angle) - 50; // 50 = half profile width
-      const y = centerY + radius * Math.sin(angle) - 50; // 50 = half profile height
-      
+    // Create member profiles
+    displayedMembers.forEach((member, index) => {
       const profile = this.createMemberProfile(member, index);
-      profile.style.left = `${x}px`;
-      profile.style.top = `${y}px`;
+      this.orbitElement.appendChild(profile);
       
-      // Add with slight delay for staggered appearance
+      // Animate in with delay
       setTimeout(() => {
         profile.classList.add('active');
-        this.container.appendChild(profile);
-      }, index * 150);
+      }, index * 100);
     });
+    
+    // Update active dot
+    this.updateActiveDot();
   }
 
   createMemberProfile(member, index) {
     const profile = document.createElement('div');
     profile.className = 'member-profile';
     profile.dataset.id = member.id;
+    profile.dataset.index = index;
     
     // Get color for avatar background
     const colorIndex = index % avatarColors.length;
     const bgColor = avatarColors[colorIndex];
     
+    // Create avatar
+    let avatarContent = member.avatarLetter;
+    if (member.avatar) {
+      avatarContent = `<img src="${member.avatar}" alt="${member.name}" onerror="this.parentElement.textContent='${member.avatarLetter}'">`;
+    }
+    
     profile.innerHTML = `
       <div class="member-avatar" style="background: ${bgColor}">
-        ${member.avatar}
+        ${avatarContent}
       </div>
       <div class="member-name">${member.name}</div>
       <div class="member-status status-${member.status}"></div>
@@ -200,22 +281,121 @@ class MembersCarousel {
     return profile;
   }
 
-  startRotation() {
-    // Clear any existing interval
-    if (this.interval) clearInterval(this.interval);
+  showBatch(batchIndex) {
+    // Calculate new batch index
+    const totalBatches = Math.ceil(this.members.length / this.displayCount);
+    this.currentIndex = (batchIndex + totalBatches) % totalBatches;
     
-    // Set up automatic rotation
+    // Animate out current members
+    const currentProfiles = this.orbitElement.querySelectorAll('.member-profile');
+    currentProfiles.forEach((profile, index) => {
+      setTimeout(() => {
+        profile.classList.remove('active');
+        profile.classList.add('exiting');
+      }, index * 50);
+    });
+    
+    // Update display after animation
+    setTimeout(() => {
+      this.updateDisplayedMembers();
+    }, 400);
+    
+    // Update active dot
+    this.updateActiveDot();
+  }
+
+  updateActiveDot() {
+    const dots = this.controls.querySelectorAll('.carousel-dot');
+    const totalBatches = Math.ceil(this.members.length / this.displayCount);
+    const activeBatch = this.currentIndex % totalBatches;
+    
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === activeBatch);
+    });
+  }
+
+  startContinuousRotation() {
+    // Smooth continuous rotation animation
+    const rotate = () => {
+      if (this.isRotating && this.orbitElement) {
+        this.currentAngle += this.rotationSpeed;
+        this.orbitElement.style.transform = `rotate(${this.currentAngle}deg)`;
+        
+        // Update member positions based on rotation
+        this.updateMemberPositions();
+      }
+      this.animationId = requestAnimationFrame(rotate);
+    };
+    
+    rotate();
+  }
+
+  updateMemberPositions() {
+    const profiles = this.orbitElement.querySelectorAll('.member-profile');
+    const radius = 200; // Match CSS transform distance
+    const angleStep = 360 / this.displayCount;
+    
+    profiles.forEach((profile, index) => {
+      const originalAngle = index * angleStep;
+      const currentAngle = (originalAngle + this.currentAngle) % 360;
+      const rad = (currentAngle * Math.PI) / 180;
+      
+      // Update transform for smooth orbiting
+      profile.style.transform = `
+        rotate(${currentAngle}deg) 
+        translateX(${radius}px) 
+        rotate(${-currentAngle}deg)
+      `;
+      
+      // Scale members based on position
+      const scale = this.calculateScale(currentAngle);
+      profile.style.transform += ` scale(${scale})`;
+      
+      // Update z-index for depth
+      profile.style.zIndex = Math.round(scale * 10);
+    });
+  }
+
+  calculateScale(angle) {
+    // Convert angle to 0-180 range for front/back calculation
+    const normalizedAngle = ((angle + 180) % 360) - 180;
+    const absAngle = Math.abs(normalizedAngle);
+    
+    // Members in front (near 0°) are larger, back (near 180°) are smaller
+    const frontScale = 1.1;
+    const backScale = 0.8;
+    
+    if (absAngle <= 60) {
+      // Front members
+      return frontScale - (absAngle / 60) * (frontScale - 1);
+    } else if (absAngle >= 120) {
+      // Back members
+      return 1 + ((absAngle - 120) / 60) * (backScale - 1);
+    } else {
+      // Side members
+      return 1;
+    }
+  }
+
+  startBatchRotation() {
+    // Auto-rotate batches every 8 seconds
     this.interval = setInterval(() => {
-      const nextBatch = (this.currentBatch + 1) % this.totalBatches;
+      const totalBatches = Math.ceil(this.members.length / this.displayCount);
+      const nextBatch = (this.currentIndex + 1) % totalBatches;
       this.showBatch(nextBatch);
-    }, this.rotationInterval);
+    }, 8000);
   }
 
   stopRotation() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
+    this.isRotating = false;
+    if (this.interval) clearInterval(this.interval);
+    if (this.animationId) cancelAnimationFrame(this.animationId);
+  }
+
+  resumeRotation() {
+    this.isRotating = true;
+    this.startContinuousRotation();
+    this.startBatchRotation();
   }
 }
 
@@ -232,16 +412,20 @@ async function fetchOnlineCount() {
     const onlineEl = document.getElementById("online");
     if (!onlineEl) return;
 
-    // Smooth animation of online count
+    // Get online count
+    const onlineCount = data.members ? 
+      data.members.filter(m => m.status !== 'offline' && !m.bot).length : 0;
+
+    // Smooth animation
     const current = parseInt(onlineEl.textContent) || 0;
-    const target = data.presence_count;
+    const target = onlineCount;
 
     let startTime = null;
+    const duration = 800;
 
     function animate(now) {
       if (!startTime) startTime = now;
       const elapsed = now - startTime;
-      const duration = 800;
       const progress = Math.min(elapsed / duration, 1);
       const value = Math.floor(current + (target - current) * progress);
       onlineEl.textContent = value;
@@ -252,32 +436,42 @@ async function fetchOnlineCount() {
 
   } catch (err) {
     console.error("Discord API error:", err);
-    // Fallback to mock data for online count
-    const onlineEl = document.getElementById("online");
-    if (onlineEl) {
-      onlineEl.textContent = "42"; // Mock online count
-    }
   }
 }
 
 // =======================
 // INITIALIZE EVERYTHING
 // =======================
-document.addEventListener('DOMContentLoaded', () => {
+let carousel;
+
+document.addEventListener('DOMContentLoaded', async () => {
   // Initialize carousel
-  const carousel = new MembersCarousel();
-  carousel.init();
+  carousel = new MembersCarousel();
+  await carousel.init();
   
-  // Fetch online count
+  // Fetch initial online count
   fetchOnlineCount();
   
   // Refresh online count every 60 seconds
   setInterval(fetchOnlineCount, 60000);
   
-  // Pause carousel on hover
+  // Pause rotation on hover
   const carouselContainer = document.querySelector('.online-members');
   if (carouselContainer) {
-    carouselContainer.addEventListener('mouseenter', () => carousel.stopRotation());
-    carouselContainer.addEventListener('mouseleave', () => carousel.startRotation());
+    carouselContainer.addEventListener('mouseenter', () => {
+      carousel.stopRotation();
+    });
+    
+    carouselContainer.addEventListener('mouseleave', () => {
+      carousel.resumeRotation();
+    });
   }
 });
+
+// Refresh members periodically
+setInterval(async () => {
+  if (carousel) {
+    await carousel.loadMembers();
+    carousel.updateDisplayedMembers();
+  }
+}, 300000); // Every 5 minutes
