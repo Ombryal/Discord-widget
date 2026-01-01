@@ -52,7 +52,7 @@ window.addEventListener("scroll", handleScrollAnimation);
 window.addEventListener("load", handleScrollAnimation);
 
 // =======================
-// DISCORD WIDGET (SINGLE SOURCE)
+// DISCORD WIDGET & ORBIT
 // =======================
 const GUILD_ID = "1433645535583277129";
 const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
@@ -74,12 +74,12 @@ async function fetchDiscordWidget() {
 
     // ---- ORBIT MEMBERS ----
     if (!orbitContainer || !Array.isArray(data.members)) return;
-
     orbitContainer.innerHTML = "";
 
     const members = data.members.slice(0, 6);
     if (members.length === 0) return;
 
+    const center = orbitContainer.offsetWidth / 2;
     const radius = window.innerWidth < 600 ? 70 : 95;
     const step = (2 * Math.PI) / members.length;
 
@@ -88,12 +88,14 @@ async function fetchDiscordWidget() {
 
       const el = document.createElement("div");
       el.className = "orbit-member";
-      el.style.transform = `
-        rotate(${angle}rad)
-        translate(${radius}px)
-        rotate(-${angle}rad)
-      `;
 
+      // Compute x and y for perfect circle
+      const x = center + radius * Math.cos(angle) - 30; // 30 = half width of orbit-member
+      const y = center + radius * Math.sin(angle) - 30; // 30 = half height
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+
+      // Avatar + status
       const avatarWrap = document.createElement("div");
       avatarWrap.className = "orbit-avatar";
 
@@ -102,13 +104,16 @@ async function fetchDiscordWidget() {
       img.alt = m.username;
 
       const status = document.createElement("span");
-      status.className = "orbit-status status-online";
+      status.className = `orbit-status status-${m.status || "online"}`;
 
       avatarWrap.appendChild(img);
       avatarWrap.appendChild(status);
 
+      // Username
       const name = document.createElement("span");
       name.textContent = m.username;
+      name.style.fontSize = "0.65rem";
+      name.style.marginTop = "2px";
 
       el.appendChild(avatarWrap);
       el.appendChild(name);
