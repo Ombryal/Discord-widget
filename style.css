@@ -715,11 +715,18 @@ body.light .member-list::-webkit-scrollbar-thumb {
    ONLINE ORBIT (ISOLATED)
 ========================= */
 
-.live-members {
+.live-members-orbit {
   position: relative;
   width: 260px;
   height: 260px;
   margin: 1.5rem auto;
+}
+
+@media (max-width: 600px) {
+  .live-members-orbit {
+    width: 200px;
+    height: 200px;
+  }
 }
 
 @media (max-width: 600px) {
