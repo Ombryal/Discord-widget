@@ -384,7 +384,7 @@ body.light #moderators h3 {
   box-shadow: 0 0 30px rgba(88, 101, 242, 0.9), 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
-/* Mods Card */
+/* Mods Card - RESTORED TO ORIGINAL SIZE */
 .mod-card-secondary {
   width: 120px;
   height: 120px;
@@ -399,6 +399,7 @@ body.light #moderators h3 {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  padding: 8px; /* Added padding to prevent text overflow */
 }
 
 .mod-card-secondary:hover {
@@ -406,18 +407,28 @@ body.light #moderators h3 {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Name & handle */
+/* Name & handle - UPDATED FOR BETTER TEXT FITTING */
 .mod-name {
   font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 6px;
+  font-size: 0.9rem; /* Slightly smaller to fit longer names */
+  margin-bottom: 4px;
   color: #fff;
+  line-height: 1.2;
+  word-break: break-word; /* Allow breaking long names */
+  overflow-wrap: break-word;
+  max-width: 100%;
+  padding: 0 4px;
 }
 
 .mod-handle {
-  font-size: 0.8rem;
+  font-size: 0.75rem; /* Slightly smaller for better fit */
   opacity: 0.8;
   color: #b5b8cc;
+  line-height: 1.2;
+  word-break: break-all; /* Handle long Discord handles */
+  overflow-wrap: break-word;
+  max-width: 100%;
+  padding: 0 4px;
 }
 
 /* Light theme */
@@ -539,7 +550,7 @@ body.light .rules li {
 }
 
 body.light .rules li::before {
-  background: linear-gradient(135deg, #4a56e2, #6a3cff); /* Softer blues for light mode */
+  background: linear-gradient(135deg, #4a56e2, #6a3cff);
 }
 
 /* =========================
@@ -639,11 +650,11 @@ body.light .rules li::before {
   }
   
   .mod-name {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
   
   .mod-handle {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
   
   .rules {
@@ -699,25 +710,25 @@ body.light .rules li::before {
     max-width: 200px;
   }
   
-  /* Moderator grid */
+  /* Moderator grid - RESTORED TO ORIGINAL MOBILE SIZES */
   .moderator-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     justify-items: center;
     align-items: center;
   }
   
   .admin-card {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .mod-card-secondary {
     width: 120px;
     height: 120px;
   }
   
-  .mod-card-secondary {
-    width: 100px;
-    height: 100px;
-  }
-  
   .mod-name {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .mod-handle {
@@ -748,13 +759,21 @@ body.light .rules li::before {
   }
   
   .admin-card {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .mod-card-secondary {
     width: 110px;
     height: 110px;
   }
   
-  .mod-card-secondary {
-    width: 90px;
-    height: 90px;
+  .mod-name {
+    font-size: 0.8rem;
+  }
+  
+  .mod-handle {
+    font-size: 0.65rem;
   }
   
   .rules h2,
