@@ -173,3 +173,83 @@ setInterval(renderMemberBatch, 5000);
 
 // initial load
 fetchMembers();
+
+// =======================
+// ORBITING ONLINE MEMBERS
+// =======================
+
+const GUILD_ID = "1433645535583277129";
+const WIDGET_URL = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
+const memberList = document.getElementById("memberList");
+
+async function loadOrbitMembers() {
+  try {
+    const res = await fetch(WIDGET_URL);
+    if (!res.ok) throw new Error("Widget fetch failed");
+
+    const data = await res.json();
+    if (!data.members || !memberList) return;
+
+    memberList.innerHTML = "";
+
+    // Limit for sanity
+    const members = data.members.slice(0, 6);
+    const radius = window.innerWidth < 600 ? 80 : 100;
+    const angleStep = (2 * Math.PI) / members.length;
+
+    members.forEach((member, index) => {
+      const angle = angleStep * index;
+
+      const pill = document.createElement("div");
+      pill.className = "member";
+      pill.style.transform = `
+        rotate(${angle}rad)
+        translate(${radius}px)
+        rotate(-${angle}rad)
+      `;
+
+      // Avatar wrapper
+      const avatarWrap = document.createElement("div");
+      avatarWrap.className = "member-avatar";
+
+      const img = document.createElement("img");
+      img.src = member.avatar_url;
+      img.alt = member.username;
+
+      // Status dot
+      const status = document.createElement("span");
+      status.className = "status-dot";
+
+      switch (member.status) {
+        case "online":
+          status.classList.add("status-online");
+          break;
+        case "idle":
+          status.classList.add("status-idle");
+          break;
+        case "dnd":
+          status.classList.add("status-dnd");
+          break;
+        default:
+          status.classList.add("status-offline");
+      }
+
+      avatarWrap.appendChild(img);
+      avatarWrap.appendChild(status);
+
+      const name = document.createElement("span");
+      name.textContent = member.username;
+
+      pill.appendChild(avatarWrap);
+      pill.appendChild(name);
+      memberList.appendChild(pill);
+    });
+
+  } catch (err) {
+    console.error("Orbit member load failed:", err);
+  }
+}
+
+// Initial + refresh
+loadOrbitMembers();
+setInterval(loadOrbitMembers, 60000);
