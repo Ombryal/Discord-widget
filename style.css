@@ -645,3 +645,68 @@ body.light .interactive-btn { background: #5865f2; color: #fff; }
 
 body.light .rules li { color: #222; }
 body.light .rules li::before { background: linear-gradient(135deg, #3a46ff, #7a3cff); }
+
+.live-members {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.live-members h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
+}
+
+.member-list {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
+}
+
+.member-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.member-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
+
+.member-card {
+  min-width: 90px;
+  background: var(--card-bg, #1e1e1e);
+  border-radius: 14px;
+  padding: 0.5rem;
+  text-align: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.member-card:hover {
+  transform: translateY(-4px);
+}
+
+.member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 0.25rem;
+}
+
+.member-name {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* light mode fixes */
+body.light .member-card {
+  background: #f2f2f2;
+}
+
+body.light .member-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.25);
+}
