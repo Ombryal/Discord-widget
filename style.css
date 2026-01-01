@@ -165,7 +165,7 @@ body.light .subtitle {
 }
 
 /* =========================
-   ONLINE MEMBERS CAROUSEL - SIMPLIFIED VERSION
+   ONLINE MEMBERS CAROUSEL - SIMPLE VERSION
    ========================= */
 .online-members {
   height: 560px;
@@ -203,20 +203,21 @@ body.light .subtitle {
   margin-top: 60px;
 }
 
-/* Simple circular container */
-.circle-container {
+/* Circular orbit container */
+.orbit-container {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   transform: translate(-50%, -50%);
 }
 
+/* Member profile - positioned by JavaScript */
 .member-profile {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: linear-gradient(135deg, #5865f2, #9b4dff);
   display: flex;
@@ -225,40 +226,20 @@ body.light .subtitle {
   align-items: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: all 0.5s ease;
-  top: 0;
-  left: 0;
-  transform-origin: 250px 250px; /* Center of the circle-container */
   opacity: 0;
   animation: fadeInProfile 0.8s ease forwards;
-}
-
-/* Position members around the circle (6 positions) */
-.member-profile:nth-child(1) { transform: rotate(0deg) translate(250px) rotate(0deg); animation-delay: 0.1s; }
-.member-profile:nth-child(2) { transform: rotate(60deg) translate(250px) rotate(-60deg); animation-delay: 0.2s; }
-.member-profile:nth-child(3) { transform: rotate(120deg) translate(250px) rotate(-120deg); animation-delay: 0.3s; }
-.member-profile:nth-child(4) { transform: rotate(180deg) translate(250px) rotate(-180deg); animation-delay: 0.4s; }
-.member-profile:nth-child(5) { transform: rotate(240deg) translate(250px) rotate(-240deg); animation-delay: 0.5s; }
-.member-profile:nth-child(6) { transform: rotate(300deg) translate(250px) rotate(-300deg); animation-delay: 0.6s; }
-
-/* Rotate the entire circle */
-.circle-container.rotating {
-  animation: rotateCircle 40s linear infinite;
-}
-
-/* Pause rotation on hover */
-.online-members:hover .circle-container.rotating {
-  animation-play-state: paused;
+  z-index: 1;
 }
 
 .member-profile.active {
-  transform: scale(1.1) !important;
+  transform: scale(1.1);
   box-shadow: 0 15px 40px rgba(88, 101, 242, 0.8);
   z-index: 2;
 }
 
 .member-avatar {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: #1e212e;
   display: flex;
@@ -776,11 +757,6 @@ body.light .rules li::before {
 }
 
 /* Carousel animations */
-@keyframes rotateCircle {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 @keyframes fadeInProfile {
   0% {
     opacity: 0;
@@ -801,6 +777,12 @@ body.light .rules li::before {
     opacity: 0;
     transform: scale(0.8);
   }
+}
+
+/* Continuous rotation animation */
+@keyframes rotateOrbit {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* =========================
@@ -844,27 +826,19 @@ body.light .rules li::before {
     height: 480px;
   }
   
-  .circle-container {
-    width: 400px;
-    height: 400px;
+  .orbit-container {
+    width: 350px;
+    height: 350px;
   }
   
   .member-profile {
-    width: 90px;
-    height: 90px;
-    transform-origin: 200px 200px;
+    width: 80px;
+    height: 80px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translate(200px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translate(200px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translate(200px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translate(200px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translate(200px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translate(200px) rotate(-300deg); }
-  
   .member-avatar {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
   
   .moderator-grid.admins {
@@ -951,27 +925,19 @@ body.light .rules li::before {
     height: 400px;
   }
   
-  .circle-container {
-    width: 320px;
-    height: 320px;
+  .orbit-container {
+    width: 300px;
+    height: 300px;
   }
   
   .member-profile {
-    width: 80px;
-    height: 80px;
-    transform-origin: 160px 160px;
+    width: 70px;
+    height: 70px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translate(160px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translate(160px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translate(160px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translate(160px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translate(160px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translate(160px) rotate(-300deg); }
-  
   .member-avatar {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
   
   .member-name {
@@ -1031,27 +997,19 @@ body.light .rules li::before {
     height: 350px;
   }
   
-  .circle-container {
-    width: 260px;
-    height: 260px;
+  .orbit-container {
+    width: 250px;
+    height: 250px;
   }
   
   .member-profile {
-    width: 70px;
-    height: 70px;
-    transform-origin: 130px 130px;
+    width: 60px;
+    height: 60px;
   }
   
-  .member-profile:nth-child(1) { transform: rotate(0deg) translate(130px) rotate(0deg); }
-  .member-profile:nth-child(2) { transform: rotate(60deg) translate(130px) rotate(-60deg); }
-  .member-profile:nth-child(3) { transform: rotate(120deg) translate(130px) rotate(-120deg); }
-  .member-profile:nth-child(4) { transform: rotate(180deg) translate(130px) rotate(-180deg); }
-  .member-profile:nth-child(5) { transform: rotate(240deg) translate(130px) rotate(-240deg); }
-  .member-profile:nth-child(6) { transform: rotate(300deg) translate(130px) rotate(-300deg); }
-  
   .member-avatar {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     font-size: 1.2rem;
   }
   
